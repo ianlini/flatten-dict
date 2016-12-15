@@ -38,3 +38,8 @@ def test_flatten_dict_inverse():
 
 def test_flatten_dict_with_reducer():
     assert flatten(normal_dict, reducer=tuple_reducer) == flat_normal_dict
+
+def test_flatten_dict_path():
+    from os.path import join
+    flat_path_dict = {join(*k): v for k, v in six.viewitems(flat_normal_dict)}
+    assert flatten(normal_dict, reducer='path') == flat_path_dict

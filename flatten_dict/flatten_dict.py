@@ -2,11 +2,12 @@ from collections import MutableMapping
 
 import six
 
-from .reducer import tuple_reducer
+from .reducer import tuple_reducer, path_reducer
 
 
 REDUCER_DICT = {
     'tuple': tuple_reducer,
+    'path': path_reducer,
 }
 
 def flatten(d, reducer='tuple', inverse=False):
