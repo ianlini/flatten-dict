@@ -14,18 +14,18 @@ REDUCER_DICT = {
 }
 
 def flatten(d, reducer='tuple'):
-    def _flatten(d, reducer='tuple', parent=None):
+    if isinstance(reducer, str):
+        reducer = REDUCER_DICT[reducer]
+
+    def _flatten(d, parent=None):
         flat_dict = {}
         for key, val in six.viewitems(d):
             flat_key = reducer(parent, key)
-            if isinstance(d, MutableMapping):
-                flat_dict.update(flatten(d, reducer, flat_key))
+            if isinstance(val, MutableMapping):
+                flat_dict.update(_flatten(val, flat_key))
             else:
                 flat_dict[flat_key] = val
         return flat_dict
 
-    if isinstance(reducer, str):
-        reducer = REDUCER_DICT[reducer]
-
-    return _flatten(d, reducer)
+    return _flatten(d)
 
