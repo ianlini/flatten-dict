@@ -1,3 +1,5 @@
+import six
+
 from flatten_dict import flatten
 
 
@@ -28,3 +30,7 @@ flat_normal_dict = {
 
 def test_flatten_dict():
     assert flatten(normal_dict) == flat_normal_dict
+
+def test_flatten_dict_inverse():
+    inv_flat_normal_dict = {v: k for k, v in six.viewitems(flat_normal_dict)}
+    assert flatten(normal_dict, inverse=True) == inv_flat_normal_dict

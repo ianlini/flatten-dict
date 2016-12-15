@@ -13,7 +13,7 @@ REDUCER_DICT = {
     'tuple': tuple_reducer,
 }
 
-def flatten(d, reducer='tuple'):
+def flatten(d, reducer='tuple', inverse=False):
     if isinstance(reducer, str):
         reducer = REDUCER_DICT[reducer]
 
@@ -23,6 +23,10 @@ def flatten(d, reducer='tuple'):
             flat_key = reducer(parent, key)
             if isinstance(val, MutableMapping):
                 flat_dict.update(_flatten(val, flat_key))
+            elif inverse:
+                if val in flat_dict:
+                    raise ValueError("duplicated key '{}'".format(val))
+                flat_dict[val] = flat_key
             else:
                 flat_dict[flat_key] = val
         return flat_dict
