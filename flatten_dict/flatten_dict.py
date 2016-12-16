@@ -1,4 +1,4 @@
-from collections import MutableMapping
+from collections import Mapping
 
 import six
 
@@ -37,7 +37,7 @@ def flatten(d, reducer='tuple', inverse=False):
         flat_dict = {}
         for key, val in six.viewitems(d):
             flat_key = reducer(parent, key)
-            if isinstance(val, MutableMapping):
+            if isinstance(val, Mapping):
                 flat_dict.update(_flatten(val, flat_key))
             elif inverse:
                 if val in flat_dict:
