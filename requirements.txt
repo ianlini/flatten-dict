@@ -3,3 +3,4 @@ six
 # for testing
 pylint
 tox
+nose

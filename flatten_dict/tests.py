@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 
 import six
+from nose.tools import assert_raises
 
 from flatten_dict import flatten
 from flatten_dict.reducer import tuple_reducer
@@ -45,3 +46,9 @@ def test_flatten_dict_path():
     from os.path import join
     flat_path_dict = {join(*k): v for k, v in six.viewitems(flat_normal_dict)}
     assert flatten(normal_dict, reducer='path') == flat_path_dict
+
+def test_flatten_dict_inverse_with_duplicated_value():
+    dup_val_dict = normal_dict.copy()
+    dup_val_dict['a'] = '2.1.1'
+    with assert_raises(ValueError):
+        flatten(dup_val_dict, inverse=True)
