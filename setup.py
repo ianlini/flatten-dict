@@ -24,7 +24,7 @@ with open('README.rst') as fp:
 
 setup(
     name='flatten-dict',
-    version="0.0.1",
+    version="0.0.2",
     description=description,
     long_description=long_description,
     author='Ian Lin',
