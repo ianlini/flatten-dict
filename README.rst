@@ -172,8 +172,6 @@ unflatten
       ...:     'c_b_b': '2.1.1',
       ...: }
 
-   In [10]:
-
    In [10]: unflatten(flat_dict, splitter=underscore_splitter)
    Out[10]:
    {'a': '0',
