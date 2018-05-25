@@ -68,6 +68,10 @@ def test_unflatten_dict_inverse():
     assert unflatten(inv_flat_normal_dict, inverse=True) == normal_dict
 
 
+def test_flatten_dict_with_splitter():
+    assert unflatten(flat_normal_dict, splitter=tuple_splitter) == normal_dict
+
+
 def test_unflatten_dict_path():
     flat_path_dict = {os.path.join(*k): v for k, v in six.viewitems(flat_normal_dict)}
     assert unflatten(flat_path_dict, splitter='path') == normal_dict
