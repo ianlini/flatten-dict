@@ -43,6 +43,9 @@ Documentation
 
 Examples
 --------
+
+flatten
+=======
 .. code-block:: python
 
    In [1]: from flatten_dict import flatten
@@ -104,3 +107,75 @@ Examples
     'c_a': '2.0',
     'c_b_a': '2.1.0',
     'c_b_b': '2.1.1'}
+
+unflatten
+=========
+.. code-block:: python
+
+In [1]: from flatten_dict import unflatten
+
+In [2]: flat_dict = {
+   ...:     ('a',): '0',
+   ...:     ('b', 'a'): '1.0',
+   ...:     ('b', 'b'): '1.1',
+   ...:     ('c', 'a'): '2.0',
+   ...:     ('c', 'b', 'a'): '2.1.0',
+   ...:     ('c', 'b', 'b'): '2.1.1',
+   ...: }
+
+In [3]: unflatten(flat_dict)
+Out[3]:
+{'a': '0',
+ 'b': {'a': '1.0', 'b': '1.1'},
+ 'c': {'a': '2.0', 'b': {'a': '2.1.0', 'b': '2.1.1'}}}
+
+In [4]: flat_dict = {
+   ...:     'a': '0',
+   ...:     'b/a': '1.0',
+   ...:     'b/b': '1.1',
+   ...:     'c/a': '2.0',
+   ...:     'c/b/a': '2.1.0',
+   ...:     'c/b/b': '2.1.1',
+   ...: }
+
+In [5]: unflatten(flat_dict, splitter='path')
+Out[5]:
+{'a': '0',
+ 'b': {'a': '1.0', 'b': '1.1'},
+ 'c': {'a': '2.0', 'b': {'a': '2.1.0', 'b': '2.1.1'}}}
+
+In [6]: flat_dict = {
+   ...:     '0': 'a',
+   ...:     '1.0': 'b/a',
+   ...:     '1.1': 'b/b',
+   ...:     '2.0': 'c/a',
+   ...:     '2.1.0': 'c/b/a',
+   ...:     '2.1.1': 'c/b/b',
+   ...: }
+
+In [7]: unflatten(flat_dict, splitter='path', inverse=True)
+Out[7]:
+{'a': '0',
+ 'b': {'a': '1.0', 'b': '1.1'},
+ 'c': {'a': '2.0', 'b': {'a': '2.1.0', 'b': '2.1.1'}}}
+
+In [8]: def underscore_splitter(flat_key):
+   ...:     return flat_key.split("_")
+   ...:
+
+In [9]: flat_dict = {
+   ...:     'a': '0',
+   ...:     'b_a': '1.0',
+   ...:     'b_b': '1.1',
+   ...:     'c_a': '2.0',
+   ...:     'c_b_a': '2.1.0',
+   ...:     'c_b_b': '2.1.1',
+   ...: }
+
+In [10]:
+
+In [10]: unflatten(flat_dict, splitter=underscore_splitter)
+Out[10]:
+{'a': '0',
+ 'b': {'a': '1.0', 'b': '1.1'},
+ 'c': {'a': '2.0', 'b': {'a': '2.1.0', 'b': '2.1.1'}}}
