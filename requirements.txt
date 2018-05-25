@@ -4,3 +4,4 @@ six
 pylint
 tox
 nose
+flake8

@@ -35,17 +35,21 @@ flat_normal_dict = {
 def test_flatten_dict():
     assert flatten(normal_dict) == flat_normal_dict
 
+
 def test_flatten_dict_inverse():
     inv_flat_normal_dict = {v: k for k, v in six.viewitems(flat_normal_dict)}
     assert flatten(normal_dict, inverse=True) == inv_flat_normal_dict
 
+
 def test_flatten_dict_with_reducer():
     assert flatten(normal_dict, reducer=tuple_reducer) == flat_normal_dict
+
 
 def test_flatten_dict_path():
     from os.path import join
     flat_path_dict = {join(*k): v for k, v in six.viewitems(flat_normal_dict)}
     assert flatten(normal_dict, reducer='path') == flat_path_dict
+
 
 def test_flatten_dict_inverse_with_duplicated_value():
     dup_val_dict = normal_dict.copy()

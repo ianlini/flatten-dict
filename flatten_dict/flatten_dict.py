@@ -48,4 +48,3 @@ def flatten(d, reducer='tuple', inverse=False):
 
     _flatten(d)
     return flat_dict
-
