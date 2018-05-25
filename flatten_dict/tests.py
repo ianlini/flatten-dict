@@ -3,7 +3,7 @@ from __future__ import absolute_import
 import six
 from nose.tools import assert_raises
 
-from flatten_dict import flatten
+from flatten_dict import flatten, unflatten
 from flatten_dict.reducer import tuple_reducer
 
 
@@ -56,3 +56,7 @@ def test_flatten_dict_inverse_with_duplicated_value():
     dup_val_dict['a'] = '2.1.1'
     with assert_raises(ValueError):
         flatten(dup_val_dict, inverse=True)
+
+
+def test_unflatten_dict():
+    assert unflatten(flat_normal_dict) == normal_dict

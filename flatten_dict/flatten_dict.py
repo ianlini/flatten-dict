@@ -3,11 +3,17 @@ from collections import Mapping
 import six
 
 from .reducer import tuple_reducer, path_reducer
+from .splitter import tuple_splitter, path_splitter
 
 
 REDUCER_DICT = {
     'tuple': tuple_reducer,
     'path': path_reducer,
+}
+
+SPLITTER_DICT = {
+    'tuple': tuple_splitter,
+    'path': path_splitter,
 }
 
 
@@ -48,3 +54,49 @@ def flatten(d, reducer='tuple', inverse=False):
 
     _flatten(d)
     return flat_dict
+
+
+def recursively_set_dict(d, keys, value):
+    """
+    Parameters
+    ----------
+    d: Mapping
+    keys: Sequence[str]
+    value: Any
+    """
+    assert keys
+    if len(keys) == 1:
+        d[keys[0]] = value
+        return
+    d = d.setdefault(keys[0], {})
+    recursively_set_dict(d, keys[1:], value)
+
+
+def unflatten(d, splitter='tuple', inverse=False):
+    """Unflatten dict-like object.
+
+    Parameters
+    ----------
+    d: dict-like object
+        The dict that will be unflattened.
+    splitter: {'tuple', 'path', function} (default: 'tuple')
+        The key splitting method. If a function is given, the function will be
+        used to split.
+        'tuple': Use each element in the tuple key as the key of the unflattened dict.
+        'path': Use ``pathlib.Path.parts`` to split keys.
+    inverse: bool (default: False)
+        Whether you want invert the key and value before flattening.
+
+    Returns
+    -------
+    unflattened_dict: dict
+    """
+    if isinstance(splitter, str):
+        splitter = SPLITTER_DICT[splitter]
+
+    unflattened_dict = {}
+    for flat_key, value in six.viewitems(d):
+        key_tuple = splitter(flat_key)
+        recursively_set_dict(unflattened_dict, key_tuple, value)
+
+    return unflattened_dict
