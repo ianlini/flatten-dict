@@ -96,6 +96,8 @@ def unflatten(d, splitter='tuple', inverse=False):
 
     unflattened_dict = {}
     for flat_key, value in six.viewitems(d):
+        if inverse:
+            flat_key, value = value, flat_key
         key_tuple = splitter(flat_key)
         recursively_set_dict(unflattened_dict, key_tuple, value)
 

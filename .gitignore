@@ -90,3 +90,5 @@ ENV/
 
 # VS Code settings
 .vscode
+
+.noseids

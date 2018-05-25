@@ -60,3 +60,8 @@ def test_flatten_dict_inverse_with_duplicated_value():
 
 def test_unflatten_dict():
     assert unflatten(flat_normal_dict) == normal_dict
+
+
+def test_unflatten_dict_inverse():
+    inv_flat_normal_dict = {v: k for k, v in six.viewitems(flat_normal_dict)}
+    assert unflatten(inv_flat_normal_dict, inverse=True) == normal_dict
