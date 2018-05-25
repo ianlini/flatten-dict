@@ -41,23 +41,24 @@ def flatten(d, reducer='tuple', inverse=False):
     flat_dict = {}
 
     def _flatten(d, parent=None):
-        for key, val in six.viewitems(d):
+        for key, value in six.viewitems(d):
             flat_key = reducer(parent, key)
-            if isinstance(val, Mapping):
-                _flatten(val, flat_key)
-            elif inverse:
-                if val in flat_dict:
-                    raise ValueError("duplicated key '{}'".format(val))
-                flat_dict[val] = flat_key
+            if isinstance(value, Mapping):
+                _flatten(value, flat_key)
             else:
-                flat_dict[flat_key] = val
+                if inverse:
+                    flat_key, value = value, flat_key
+                if flat_key in flat_dict:
+                    raise ValueError("duplicated key '{}'".format(flat_key))
+                flat_dict[flat_key] = value
 
     _flatten(d)
     return flat_dict
 
 
-def recursively_set_dict(d, keys, value):
-    """
+def nested_set_dict(d, keys, value):
+    """Set a value to a sequence of nested keys
+
     Parameters
     ----------
     d: Mapping
@@ -65,11 +66,14 @@ def recursively_set_dict(d, keys, value):
     value: Any
     """
     assert keys
+    key = keys[0]
     if len(keys) == 1:
-        d[keys[0]] = value
+        if key in d:
+            raise ValueError("duplicated key '{}'".format(key))
+        d[key] = value
         return
-    d = d.setdefault(keys[0], {})
-    recursively_set_dict(d, keys[1:], value)
+    d = d.setdefault(key, {})
+    nested_set_dict(d, keys[1:], value)
 
 
 def unflatten(d, splitter='tuple', inverse=False):
@@ -99,6 +103,6 @@ def unflatten(d, splitter='tuple', inverse=False):
         if inverse:
             flat_key, value = value, flat_key
         key_tuple = splitter(flat_key)
-        recursively_set_dict(unflattened_dict, key_tuple, value)
+        nested_set_dict(unflattened_dict, key_tuple, value)
 
     return unflattened_dict

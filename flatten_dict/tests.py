@@ -71,3 +71,10 @@ def test_unflatten_dict_inverse():
 def test_unflatten_dict_path():
     flat_path_dict = {os.path.join(*k): v for k, v in six.viewitems(flat_normal_dict)}
     assert unflatten(flat_path_dict, splitter='path') == normal_dict
+
+
+def test_unflatten_dict_inverse_with_duplicated_value():
+    inv_flat_normal_dict = {v: k for k, v in six.viewitems(flat_normal_dict)}
+    inv_flat_normal_dict['2.1.1'] = ('c', 'b', 'a')
+    with assert_raises(ValueError):
+        unflatten(inv_flat_normal_dict, inverse=True)
