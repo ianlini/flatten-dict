@@ -1,10 +1,12 @@
 from __future__ import absolute_import
+import os.path
 
 import six
 from nose.tools import assert_raises
 
 from flatten_dict import flatten, unflatten
 from flatten_dict.reducer import tuple_reducer
+from flatten_dict.splitter import tuple_splitter
 
 
 normal_dict = {
@@ -46,8 +48,7 @@ def test_flatten_dict_with_reducer():
 
 
 def test_flatten_dict_path():
-    from os.path import join
-    flat_path_dict = {join(*k): v for k, v in six.viewitems(flat_normal_dict)}
+    flat_path_dict = {os.path.join(*k): v for k, v in six.viewitems(flat_normal_dict)}
     assert flatten(normal_dict, reducer='path') == flat_path_dict
 
 
@@ -65,3 +66,8 @@ def test_unflatten_dict():
 def test_unflatten_dict_inverse():
     inv_flat_normal_dict = {v: k for k, v in six.viewitems(flat_normal_dict)}
     assert unflatten(inv_flat_normal_dict, inverse=True) == normal_dict
+
+
+def test_unflatten_dict_path():
+    flat_path_dict = {os.path.join(*k): v for k, v in six.viewitems(flat_normal_dict)}
+    assert unflatten(flat_path_dict, splitter='path') == normal_dict

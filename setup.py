@@ -8,6 +8,7 @@ setup_requires = [
 ]
 install_requires = [
     'six',
+    'pathlib2>=2.3',
 ]
 tests_require = []
 
