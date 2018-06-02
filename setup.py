@@ -13,7 +13,7 @@ install_requires = [
 tests_require = []
 
 
-description = "A flexible utility for flattening dict-like objects in Python."
+description = "A flexible utility for flattening and unflattening dict-like objects in Python."
 
 long_description = """\
 Please visit  the `GitHub repository <https://github.com/ianlini/flatten-dict>`_

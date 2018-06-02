@@ -89,7 +89,7 @@ def unflatten(d, splitter='tuple', inverse=False):
         'tuple': Use each element in the tuple key as the key of the unflattened dict.
         'path': Use ``pathlib.Path.parts`` to split keys.
     inverse: bool (default: False)
-        Whether you want invert the key and value before flattening.
+        Whether you want to invert the key and value before flattening.
 
     Returns
     -------

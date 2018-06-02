@@ -7,7 +7,7 @@ flatten-dict
 .. image:: https://img.shields.io/pypi/l/flatten-dict.svg
    :target: https://pypi.python.org/pypi/flatten-dict
 
-A flexible utility for flattening dict-like objects in Python.
+A flexible utility for flattening and unflattening dict-like objects in Python.
 
 
 Introduction
@@ -17,6 +17,9 @@ It also provides some key joining methods (reducer), and you can choose the redu
 
 Documentation
 -------------
+
+Flatten
+```````
 
 .. code-block:: python
 
@@ -40,12 +43,9 @@ Documentation
        flat_dict: dict
        """
 
-
 Examples
---------
+::::::::
 
-flatten
-=======
 .. code-block:: python
 
    In [1]: from flatten_dict import flatten
@@ -108,8 +108,34 @@ flatten
     'c_b_a': '2.1.0',
     'c_b_b': '2.1.1'}
 
-unflatten
-=========
+Unflatten
+`````````
+
+.. code-block:: python
+
+   def unflatten(d, splitter='tuple', inverse=False):
+       """Unflatten dict-like object.
+
+       Parameters
+       ----------
+       d: dict-like object
+           The dict that will be unflattened.
+       splitter: {'tuple', 'path', function} (default: 'tuple')
+           The key splitting method. If a function is given, the function will be
+           used to split.
+           'tuple': Use each element in the tuple key as the key of the unflattened dict.
+           'path': Use ``pathlib.Path.parts`` to split keys.
+       inverse: bool (default: False)
+           Whether you want to invert the key and value before flattening.
+
+       Returns
+       -------
+       unflattened_dict: dict
+       """
+
+Examples
+::::::::
+
 .. code-block:: python
 
    In [1]: from flatten_dict import unflatten
