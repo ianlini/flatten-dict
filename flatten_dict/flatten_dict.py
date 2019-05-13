@@ -44,6 +44,7 @@ def flatten(d, reducer='tuple', inverse=False):
         for key, value in six.viewitems(d):
             flat_key = reducer(parent, key)
             if False:
+                pass
             elif isinstance(value, (Mapping, list)):
                 _flatten(value, flat_key)
             else:
