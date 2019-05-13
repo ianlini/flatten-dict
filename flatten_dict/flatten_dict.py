@@ -41,7 +41,7 @@ def flatten(d, reducer='tuple', inverse=False):
     flat_dict = {}
 
     def _flatten(d, parent=None):
-        for key, value in six.viewitems(d):
+        for key, value in (six.viewitems(d) if isinstance(d, dict) else enumerate(d)):
             flat_key = reducer(parent, key)
             if False:
                 pass
