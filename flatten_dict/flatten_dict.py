@@ -17,7 +17,7 @@ SPLITTER_DICT = {
 }
 
 
-def flatten(d, reducer='tuple', inverse=False):
+def flatten(d, reducer='tuple', inverse=False, enumerate_types=()):
     """Flatten dict-like object.
 
     Parameters
@@ -31,6 +31,9 @@ def flatten(d, reducer='tuple', inverse=False):
         'path': Use ``os.path.join`` to join keys.
     inverse: bool (default: False)
         Whether you want invert the resulting key and value.
+    enumerate_types: tuple or list of types (default: ())
+        Allows you to also key/flatten enumeratable types such as lists.
+        Eg. List indices become keys: { a: [ b, c ] } -> { a.0: b, a.1: c }
 
     Returns
     -------
@@ -43,7 +46,7 @@ def flatten(d, reducer='tuple', inverse=False):
     def _flatten(d, parent=None):
         for key, value in (six.viewitems(d) if isinstance(d, dict) else enumerate(d)):
             flat_key = reducer(parent, key)
-            if isinstance(value, (Mapping, list)):
+            if isinstance(value, (Mapping, *enumerate_types)):
                 _flatten(value, flat_key)
             else:
                 if inverse:
