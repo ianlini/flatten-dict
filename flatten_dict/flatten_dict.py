@@ -17,7 +17,7 @@ SPLITTER_DICT = {
 }
 
 
-def flatten(d, reducer='tuple', inverse=False, enumerate_types=[]):
+def flatten(d, reducer='tuple', inverse=False, enumerate_types=()):
     """Flatten dict-like object.
 
     Parameters
@@ -46,7 +46,7 @@ def flatten(d, reducer='tuple', inverse=False, enumerate_types=[]):
     def _flatten(d, parent=None):
         for key, value in (six.viewitems(d) if isinstance(d, dict) else enumerate(d)):
             flat_key = reducer(parent, key)
-            if isinstance(value, tuple([ Mapping ] + enumerate_types)):
+            if isinstance(value, (Mapping,) + enumerate_types):
                 _flatten(value, flat_key)
             else:
                 if inverse:
