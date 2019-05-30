@@ -18,27 +18,29 @@ SPLITTER_DICT = {
 
 
 def flatten(d, reducer='tuple', inverse=False, enumerate_types=()):
-    """Flatten dict-like object.
+    """Flatten `Mapping` object.
 
     Parameters
     ----------
-    d: dict-like object
+    d : dict-like object
         The dict that will be flattened.
-    reducer: {'tuple', 'path', function} (default: 'tuple')
-        The key joining method. If a function is given, the function will be
+    reducer : {'tuple', 'path', Callable}
+        The key joining method. If a `Callable` is given, the `Callable` will be
         used to reduce.
-        'tuple': The resulting key will be tuple of the original keys
-        'path': Use ``os.path.join`` to join keys.
-    inverse: bool (default: False)
+        'tuple': The resulting key will be tuple of the original keys.
+        'path': Use `os.path.join` to join keys.
+    inverse : bool
         Whether you want invert the resulting key and value.
-    enumerate_types: tuple or list of types (default: ())
-        Allows you to also key/flatten enumeratable types such as lists.
-        Eg. List indices become keys: { a: [ b, c ] } -> { a.0: b, a.1: c }
+    enumerate_types : Sequence[type]
+        Flatten these types using `enumerate`.
+        For example, if we set `enumerate_types` to ``(list,)``,
+        `list` indices become keys: ``{'a': ['b', 'c']}`` -> ``{('a', 0): 'b', ('a', 1): 'c'}``.
 
     Returns
     -------
     flat_dict: dict
     """
+    enumerate_types = tuple(enumerate_types)
     flattenable_types = (Mapping,) + enumerate_types
     if not isinstance(d, flattenable_types):
         raise ValueError("argument 'd' is not in the flattenalbe types %s" % flattenable_types)
@@ -69,9 +71,9 @@ def nested_set_dict(d, keys, value):
 
     Parameters
     ----------
-    d: Mapping
-    keys: Sequence[str]
-    value: Any
+    d : Mapping
+    keys : Sequence[str]
+    value : Any
     """
     assert keys
     key = keys[0]
@@ -89,14 +91,14 @@ def unflatten(d, splitter='tuple', inverse=False):
 
     Parameters
     ----------
-    d: dict-like object
+    d : dict-like object
         The dict that will be unflattened.
-    splitter: {'tuple', 'path', function} (default: 'tuple')
-        The key splitting method. If a function is given, the function will be
+    splitter : {'tuple', 'path', Callable}
+        The key splitting method. If a Callable is given, the Callable will be
         used to split.
         'tuple': Use each element in the tuple key as the key of the unflattened dict.
-        'path': Use ``pathlib.Path.parts`` to split keys.
-    inverse: bool (default: False)
+        'path': Use `pathlib.Path.parts` to split keys.
+    inverse : bool
         Whether you want to invert the key and value before flattening.
 
     Returns
