@@ -7,6 +7,7 @@ verify_ssl = true
 nose = "*"
 tox = "*"
 flake8 = "*"
+docutils = "*"
 
 [packages]
 six = "*"

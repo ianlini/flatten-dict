@@ -38,6 +38,11 @@ def test_flatten_dict():
     assert flatten(normal_dict) == flat_normal_dict
 
 
+def test_flatten_nonflattenable_type():
+    with assert_raises(ValueError):
+        flatten([])
+
+
 def test_flatten_dict_inverse():
     inv_flat_normal_dict = {v: k for k, v in six.viewitems(flat_normal_dict)}
     assert flatten(normal_dict, inverse=True) == inv_flat_normal_dict
@@ -68,7 +73,7 @@ def test_unflatten_dict_inverse():
     assert unflatten(inv_flat_normal_dict, inverse=True) == normal_dict
 
 
-def test_flatten_dict_with_splitter():
+def test_unflatten_dict_with_splitter():
     assert unflatten(flat_normal_dict, splitter=tuple_splitter) == normal_dict
 
 
@@ -82,3 +87,74 @@ def test_unflatten_dict_inverse_with_duplicated_value():
     inv_flat_normal_dict['2.1.1'] = ('c', 'b', 'a')
     with assert_raises(ValueError):
         unflatten(inv_flat_normal_dict, inverse=True)
+
+
+dict_with_list = {
+    'a': '0',
+    'b': {
+        'a': '1.0',
+        'b': '1.1',
+    },
+    'c': {
+        'a': '2.0',
+        'b': {
+            'a': '2.1.0',
+            'b': ['2.1.1.0', '2.1.1.1'],
+        },
+    },
+}
+
+
+flat_dict_with_list = {
+    ('a',): '0',
+    ('b', 'a'): '1.0',
+    ('b', 'b'): '1.1',
+    ('c', 'a'): '2.0',
+    ('c', 'b', 'a'): '2.1.0',
+    ('c', 'b', 'b'): ['2.1.1.0', '2.1.1.1'],
+}
+
+
+def test_flatten_dict_with_list():
+    assert flatten(dict_with_list) == flat_dict_with_list
+
+
+def test_flatten_dict_with_list_with_reducer():
+    assert flatten(dict_with_list, reducer=tuple_reducer) == flat_dict_with_list
+
+
+def test_flatten_dict_with_list_path():
+    flat_path_dict = {os.path.join(*k): v for k, v in six.viewitems(flat_dict_with_list)}
+    assert flatten(dict_with_list, reducer='path') == flat_path_dict
+
+
+def test_unflatten_dict_with_list():
+    assert unflatten(flat_dict_with_list) == dict_with_list
+
+
+def test_unflatten_dict_with_list_with_splitter():
+    assert unflatten(flat_dict_with_list, splitter=tuple_splitter) == dict_with_list
+
+
+def test_unflatten_dict_with_list_path():
+    flat_path_dict = {os.path.join(*k): v for k, v in six.viewitems(flat_dict_with_list)}
+    assert unflatten(flat_path_dict, splitter='path') == dict_with_list
+
+
+flat_dict_with_enumerated_list = {
+    ('a',): '0',
+    ('b', 'a'): '1.0',
+    ('b', 'b'): '1.1',
+    ('c', 'a'): '2.0',
+    ('c', 'b', 'a'): '2.1.0',
+    ('c', 'b', 'b', 0): '2.1.1.0',
+    ('c', 'b', 'b', 1): '2.1.1.1',
+}
+
+
+def test_flatten_dict_with_list_with_enumerate_types():
+    assert flatten(dict_with_list, enumerate_types=(list,)) == flat_dict_with_enumerated_list
+
+
+def test_flatten_list():
+    assert flatten([1, 2], enumerate_types=(list,)) == {(0,): 1, (1,): 2}
