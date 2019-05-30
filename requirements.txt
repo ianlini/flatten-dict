@@ -1,8 +1,0 @@
-six
-pathlib2>=2.3
-
-# for testing
-pylint
-tox
-nose
-flake8
