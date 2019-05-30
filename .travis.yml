@@ -1,20 +1,24 @@
 notifications:
-  slack: true
-  email: false
+  email:
+    on_success: change
+    on_failure: always
 
-sudo: required
+sudo: false
 language: python
-python:
-  - 2.7
-  - 3.4
-  - 3.5
-
-cache:
-  directories:
-    - $HOME/.cache/pip
+matrix:
+  include:
+    - python: '2.7'
+    - python: '3.5'
+    - python: '3.6'
+    - python: '3.7'
+      dist: xenial
+      sudo: true
+    - python: '3.6'
+      env: TOXENV=flake8
 
 install:
-  - pip install -U pip wheel
+  - pip install -U pip wheel setuptools
+  - pip install -U Cython
   - pip install -U tox-travis tox
 
 script:
