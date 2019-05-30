@@ -43,7 +43,8 @@ def flatten(d, reducer='tuple', inverse=False, enumerate_types=()):
     enumerate_types = tuple(enumerate_types)
     flattenable_types = (Mapping,) + enumerate_types
     if not isinstance(d, flattenable_types):
-        raise ValueError("argument 'd' is not in the flattenalbe types %s" % flattenable_types)
+        raise ValueError("argument type %s is not in the flattenalbe types %s"
+                         % (type(d), flattenable_types))
 
     if isinstance(reducer, str):
         reducer = REDUCER_DICT[reducer]
