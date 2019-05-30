@@ -23,24 +23,28 @@ Flatten
 
 .. code-block:: python
 
-   def flatten(d, reducer='tuple', inverse=False):
-       """Flatten dict-like object.
+   def flatten(d, reducer='tuple', inverse=False, enumerate_types=()):
+       """Flatten `Mapping` object.
 
        Parameters
        ----------
-       d: dict-like object
+       d : dict-like object
            The dict that will be flattened.
-       reducer: {'tuple', 'path', function} (default: 'tuple')
-           The key joining method. If a function is given, the function will be
+       reducer : {'tuple', 'path', Callable}
+           The key joining method. If a `Callable` is given, the `Callable` will be
            used to reduce.
-           'tuple': The resulting key will be tuple of the original keys
-           'path': Use ``os.path.join`` to join keys.
-       inverse: bool (default: False)
+           'tuple': The resulting key will be tuple of the original keys.
+           'path': Use `os.path.join` to join keys.
+       inverse : bool
            Whether you want invert the resulting key and value.
+       enumerate_types : Sequence[type]
+           Flatten these types using `enumerate`.
+           For example, if we set `enumerate_types` to ``(list,)``,
+           `list` indices become keys: ``{'a': ['b', 'c']}`` -> ``{('a', 0): 'b', ('a', 1): 'c'}``.
 
        Returns
        -------
-       flat_dict: dict
+       flat_dict : dict
        """
 
 Examples
@@ -108,6 +112,36 @@ Examples
     'c_b_a': '2.1.0',
     'c_b_b': '2.1.1'}
 
+If we have some iterable (e.g., `list`) in the `dict`, we will normally get this:
+
+.. code-block:: python
+
+   In [8]: flatten({'a': [1, 2, 3], 'b': 'c'})
+   Out[8]:
+   {('a',): [1, 2, 3],
+    ('b',): 'c'}
+
+If want to use its indices as keys, then we can use the parameter `enumerate_types`:
+
+.. code-block:: python
+
+   In [9]: flatten({'a': [1, 2, 3], 'b': 'c'}, enumerate_types=(list,))
+   Out[9]:
+   {('a', 0): 1,
+    ('a', 1): 2,
+    ('a', 2): 3,
+    ('b',): 'c'}
+
+We can even flatten a `list` directly:
+
+.. code-block:: python
+
+   In [10]: flatten([1, 2, 3], enumerate_types=(list,))
+   Out[10]:
+   {(0,): 1,
+    (1,): 2,
+    (2,): 3}
+
 Unflatten
 `````````
 
@@ -118,19 +152,19 @@ Unflatten
 
        Parameters
        ----------
-       d: dict-like object
+       d : dict-like object
            The dict that will be unflattened.
-       splitter: {'tuple', 'path', function} (default: 'tuple')
-           The key splitting method. If a function is given, the function will be
+       splitter : {'tuple', 'path', Callable}
+           The key splitting method. If a Callable is given, the Callable will be
            used to split.
            'tuple': Use each element in the tuple key as the key of the unflattened dict.
-           'path': Use ``pathlib.Path.parts`` to split keys.
-       inverse: bool (default: False)
+           'path': Use `pathlib.Path.parts` to split keys.
+       inverse : bool
            Whether you want to invert the key and value before flattening.
 
        Returns
        -------
-       unflattened_dict: dict
+       unflattened_dict : dict
        """
 
 Examples

@@ -38,7 +38,7 @@ def flatten(d, reducer='tuple', inverse=False, enumerate_types=()):
 
     Returns
     -------
-    flat_dict: dict
+    flat_dict : dict
     """
     enumerate_types = tuple(enumerate_types)
     flattenable_types = (Mapping,) + enumerate_types
@@ -104,7 +104,7 @@ def unflatten(d, splitter='tuple', inverse=False):
 
     Returns
     -------
-    unflattened_dict: dict
+    unflattened_dict : dict
     """
     if isinstance(splitter, str):
         splitter = SPLITTER_DICT[splitter]
