@@ -121,7 +121,7 @@ If we have some iterable (e.g., `list`) in the `dict`, we will normally get this
    {('a',): [1, 2, 3],
     ('b',): 'c'}
 
-If want to use its indices as keys, then we can use the parameter `enumerate_types`:
+If we want to use its indices as keys, then we can use the parameter `enumerate_types`:
 
 .. code-block:: python
 
