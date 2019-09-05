@@ -31,6 +31,7 @@ def flatten(d, reducer='tuple', inverse=False, enumerate_types=()):
         used to reduce.
         'tuple': The resulting key will be tuple of the original keys.
         'path': Use `os.path.join` to join keys.
+        'underscore': Use underscores to join keys.
     inverse : bool
         Whether you want invert the resulting key and value.
     enumerate_types : Sequence[type]
@@ -101,6 +102,7 @@ def unflatten(d, splitter='tuple', inverse=False):
         used to split.
         'tuple': Use each element in the tuple key as the key of the unflattened dict.
         'path': Use `pathlib.Path.parts` to split keys.
+        'underscore': Use underscores to join keys.
     inverse : bool
         Whether you want to invert the key and value before flattening.
 

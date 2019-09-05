@@ -35,6 +35,7 @@ Flatten
            used to reduce.
            'tuple': The resulting key will be tuple of the original keys.
            'path': Use `os.path.join` to join keys.
+           'underscore': Use underscores to join keys.
        inverse : bool
            Whether you want invert the resulting key and value.
        enumerate_types : Sequence[type]
