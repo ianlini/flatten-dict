@@ -2,18 +2,20 @@ from collections import Mapping
 
 import six
 
-from .reducer import tuple_reducer, path_reducer
-from .splitter import tuple_splitter, path_splitter
+from .reducer import tuple_reducer, path_reducer, underscore_reducer
+from .splitter import tuple_splitter, path_splitter, underscore_splitter
 
 
 REDUCER_DICT = {
     'tuple': tuple_reducer,
     'path': path_reducer,
+    'underscore': underscore_reducer,
 }
 
 SPLITTER_DICT = {
     'tuple': tuple_splitter,
     'path': path_splitter,
+    'underscore': underscore_splitter,
 }
 
 
