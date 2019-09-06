@@ -26,7 +26,7 @@ def flatten(d, reducer='tuple', inverse=False, enumerate_types=()):
     ----------
     d : dict-like object
         The dict that will be flattened.
-    reducer : {'tuple', 'path', Callable}
+    reducer : {'tuple', 'path', 'underscore', Callable}
         The key joining method. If a `Callable` is given, the `Callable` will be
         used to reduce.
         'tuple': The resulting key will be tuple of the original keys.
@@ -97,7 +97,7 @@ def unflatten(d, splitter='tuple', inverse=False):
     ----------
     d : dict-like object
         The dict that will be unflattened.
-    splitter : {'tuple', 'path', Callable}
+    splitter : {'tuple', 'path', 'underscore', Callable}
         The key splitting method. If a Callable is given, the Callable will be
         used to split.
         'tuple': Use each element in the tuple key as the key of the unflattened dict.
