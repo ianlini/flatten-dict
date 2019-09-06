@@ -30,7 +30,7 @@ Flatten
        ----------
        d : dict-like object
            The dict that will be flattened.
-       reducer : {'tuple', 'path', Callable}
+       reducer : {'tuple', 'path', 'underscore', Callable}
            The key joining method. If a `Callable` is given, the `Callable` will be
            used to reduce.
            'tuple': The resulting key will be tuple of the original keys.
@@ -155,11 +155,12 @@ Unflatten
        ----------
        d : dict-like object
            The dict that will be unflattened.
-       splitter : {'tuple', 'path', Callable}
+       splitter : {'tuple', 'path', 'underscore', Callable}
            The key splitting method. If a Callable is given, the Callable will be
            used to split.
            'tuple': Use each element in the tuple key as the key of the unflattened dict.
            'path': Use `pathlib.Path.parts` to split keys.
+           'underscore': Use underscores to split keys.
        inverse : bool
            Whether you want to invert the key and value before flattening.
 
