@@ -58,9 +58,7 @@ def test_flatten_dict_path():
 
 
 def test_flatten_dict_underscore():
-    flat_normal_dict_items = six.viewitems(flat_normal_dict)
-    flat_underscore_dict = {os.path.join(
-        *k).replace("/", "_"): v for k, v in flat_normal_dict_items}
+    flat_underscore_dict = {'_'.join(k): v for k, v in six.viewitems(flat_normal_dict)}
     assert flatten(normal_dict, reducer='underscore') == flat_underscore_dict
 
 
@@ -90,8 +88,7 @@ def test_unflatten_dict_path():
 
 
 def test_unflatten_dict_underscore():
-    flat_underscore_dict = {os.path.join(
-        *k).replace("/", "_"): v for k, v in six.viewitems(flat_normal_dict)}
+    flat_underscore_dict = {'_'.join(k): v for k, v in six.viewitems(flat_normal_dict)}
     assert unflatten(flat_underscore_dict, splitter='underscore') == normal_dict
 
 
@@ -142,8 +139,7 @@ def test_flatten_dict_with_list_path():
 
 
 def test_flatten_dict_with_list_underscore():
-    flat_underscore_dict = {os.path.join(
-        *k).replace("/", "_"): v for k, v in six.viewitems(flat_dict_with_list)}
+    flat_underscore_dict = {'_'.join(k): v for k, v in six.viewitems(flat_dict_with_list)}
     assert flatten(dict_with_list, reducer='underscore') == flat_underscore_dict
 
 
@@ -161,8 +157,7 @@ def test_unflatten_dict_with_list_path():
 
 
 def test_unflatten_dict_with_list_underscore():
-    flat_underscore_dict = {os.path.join(
-        *k).replace("/", "_"): v for k, v in six.viewitems(flat_dict_with_list)}
+    flat_underscore_dict = {'_'.join(k): v for k, v in six.viewitems(flat_dict_with_list)}
     assert unflatten(flat_underscore_dict, splitter='underscore') == dict_with_list
 
 
