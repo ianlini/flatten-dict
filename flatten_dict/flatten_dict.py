@@ -2,18 +2,20 @@ from collections import Mapping
 
 import six
 
-from .reducer import tuple_reducer, path_reducer
-from .splitter import tuple_splitter, path_splitter
+from .reducer import tuple_reducer, path_reducer, underscore_reducer
+from .splitter import tuple_splitter, path_splitter, underscore_splitter
 
 
 REDUCER_DICT = {
     'tuple': tuple_reducer,
     'path': path_reducer,
+    'underscore': underscore_reducer,
 }
 
 SPLITTER_DICT = {
     'tuple': tuple_splitter,
     'path': path_splitter,
+    'underscore': underscore_splitter,
 }
 
 
@@ -24,11 +26,12 @@ def flatten(d, reducer='tuple', inverse=False, enumerate_types=()):
     ----------
     d : dict-like object
         The dict that will be flattened.
-    reducer : {'tuple', 'path', Callable}
+    reducer : {'tuple', 'path', 'underscore', Callable}
         The key joining method. If a `Callable` is given, the `Callable` will be
         used to reduce.
         'tuple': The resulting key will be tuple of the original keys.
         'path': Use `os.path.join` to join keys.
+        'underscore': Use underscores to join keys.
     inverse : bool
         Whether you want invert the resulting key and value.
     enumerate_types : Sequence[type]
@@ -94,11 +97,12 @@ def unflatten(d, splitter='tuple', inverse=False):
     ----------
     d : dict-like object
         The dict that will be unflattened.
-    splitter : {'tuple', 'path', Callable}
+    splitter : {'tuple', 'path', 'underscore', Callable}
         The key splitting method. If a Callable is given, the Callable will be
         used to split.
         'tuple': Use each element in the tuple key as the key of the unflattened dict.
         'path': Use `pathlib.Path.parts` to split keys.
+        'underscore': Use underscores to join keys.
     inverse : bool
         Whether you want to invert the key and value before flattening.
 

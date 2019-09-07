@@ -57,6 +57,11 @@ def test_flatten_dict_path():
     assert flatten(normal_dict, reducer='path') == flat_path_dict
 
 
+def test_flatten_dict_underscore():
+    flat_underscore_dict = {'_'.join(k): v for k, v in six.viewitems(flat_normal_dict)}
+    assert flatten(normal_dict, reducer='underscore') == flat_underscore_dict
+
+
 def test_flatten_dict_inverse_with_duplicated_value():
     dup_val_dict = normal_dict.copy()
     dup_val_dict['a'] = '2.1.1'
@@ -80,6 +85,11 @@ def test_unflatten_dict_with_splitter():
 def test_unflatten_dict_path():
     flat_path_dict = {os.path.join(*k): v for k, v in six.viewitems(flat_normal_dict)}
     assert unflatten(flat_path_dict, splitter='path') == normal_dict
+
+
+def test_unflatten_dict_underscore():
+    flat_underscore_dict = {'_'.join(k): v for k, v in six.viewitems(flat_normal_dict)}
+    assert unflatten(flat_underscore_dict, splitter='underscore') == normal_dict
 
 
 def test_unflatten_dict_inverse_with_duplicated_value():
@@ -128,6 +138,11 @@ def test_flatten_dict_with_list_path():
     assert flatten(dict_with_list, reducer='path') == flat_path_dict
 
 
+def test_flatten_dict_with_list_underscore():
+    flat_underscore_dict = {'_'.join(k): v for k, v in six.viewitems(flat_dict_with_list)}
+    assert flatten(dict_with_list, reducer='underscore') == flat_underscore_dict
+
+
 def test_unflatten_dict_with_list():
     assert unflatten(flat_dict_with_list) == dict_with_list
 
@@ -139,6 +154,11 @@ def test_unflatten_dict_with_list_with_splitter():
 def test_unflatten_dict_with_list_path():
     flat_path_dict = {os.path.join(*k): v for k, v in six.viewitems(flat_dict_with_list)}
     assert unflatten(flat_path_dict, splitter='path') == dict_with_list
+
+
+def test_unflatten_dict_with_list_underscore():
+    flat_underscore_dict = {'_'.join(k): v for k, v in six.viewitems(flat_dict_with_list)}
+    assert unflatten(flat_underscore_dict, splitter='underscore') == dict_with_list
 
 
 flat_dict_with_enumerated_list = {
