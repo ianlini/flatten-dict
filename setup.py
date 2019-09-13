@@ -42,6 +42,5 @@ setup(
         'Programming Language :: Python :: 3.7',
         'License :: OSI Approved :: BSD License',
     ],
-    test_suite='nose.collector',
     packages=find_packages(),
 )
