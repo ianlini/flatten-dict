@@ -1,0 +1,216 @@
+from __future__ import absolute_import
+import os.path
+
+import six
+import pytest
+
+from flatten_dict import flatten, unflatten
+from flatten_dict.reducer import tuple_reducer, path_reducer, underscore_reducer
+from flatten_dict.splitter import tuple_splitter, path_splitter, underscore_splitter
+
+
+@pytest.fixture
+def normal_dict():
+    return {
+        'a': '0',
+        'b': {
+            'a': '1.0',
+            'b': '1.1',
+        },
+        'c': {
+            'a': '2.0',
+            'b': {
+                'a': '2.1.0',
+                'b': '2.1.1',
+            },
+        },
+    }
+
+
+@pytest.fixture
+def flat_tuple_dict():
+    return {
+        ('a',): '0',
+        ('b', 'a'): '1.0',
+        ('b', 'b'): '1.1',
+        ('c', 'a'): '2.0',
+        ('c', 'b', 'a'): '2.1.0',
+        ('c', 'b', 'b'): '2.1.1',
+    }
+
+
+def get_flat_tuple_dict(flat_tuple_dict):
+    return flat_tuple_dict
+
+
+def get_flat_path_dict(flat_tuple_dict):
+    return {os.path.join(*k): v for k, v in six.viewitems(flat_tuple_dict)}
+
+
+def get_flat_underscore_dict(flat_tuple_dict):
+    return {'_'.join(k): v for k, v in six.viewitems(flat_tuple_dict)}
+
+
+@pytest.fixture
+def inv_flat_tuple_dict(flat_tuple_dict):
+    return {v: k for k, v in six.viewitems(flat_tuple_dict)}
+
+
+def test_flatten_dict(normal_dict, flat_tuple_dict):
+    assert flatten(normal_dict) == flat_tuple_dict
+
+
+def test_flatten_nonflattenable_type():
+    with pytest.raises(ValueError):
+        flatten([])
+
+
+@pytest.mark.parametrize(
+    'reducer, expected_flat_dict_func',
+    [
+        ('tuple', get_flat_tuple_dict),
+        ('path', get_flat_path_dict),
+        ('underscore', get_flat_underscore_dict),
+        (tuple_reducer, get_flat_tuple_dict),
+        (path_reducer, get_flat_path_dict),
+        (underscore_reducer, get_flat_underscore_dict),
+    ],
+)
+def test_flatten_dict_with_reducer(normal_dict, flat_tuple_dict, reducer, expected_flat_dict_func):
+    expected_flat_dict = expected_flat_dict_func(flat_tuple_dict)
+    assert flatten(normal_dict, reducer=reducer) == expected_flat_dict
+
+
+def test_flatten_dict_inverse(normal_dict, inv_flat_tuple_dict):
+    assert flatten(normal_dict, inverse=True) == inv_flat_tuple_dict
+
+
+def test_flatten_dict_inverse_with_duplicated_value(normal_dict):
+    dup_val_dict = normal_dict.copy()
+    dup_val_dict['a'] = '2.1.1'
+    with pytest.raises(ValueError):
+        flatten(dup_val_dict, inverse=True)
+
+
+def test_unflatten_dict(normal_dict, flat_tuple_dict):
+    assert unflatten(flat_tuple_dict) == normal_dict
+
+
+def test_unflatten_dict_inverse(normal_dict, inv_flat_tuple_dict):
+    assert unflatten(inv_flat_tuple_dict, inverse=True) == normal_dict
+
+
+@pytest.mark.parametrize(
+    'splitter, flat_dict_func',
+    [
+        ('tuple', get_flat_tuple_dict),
+        ('path', get_flat_path_dict),
+        ('underscore', get_flat_underscore_dict),
+        (tuple_splitter, get_flat_tuple_dict),
+        (path_splitter, get_flat_path_dict),
+        (underscore_splitter, get_flat_underscore_dict),
+    ],
+)
+def test_unflatten_dict_with_splitter(normal_dict, flat_tuple_dict, splitter, flat_dict_func):
+    flat_dict = flat_dict_func(flat_tuple_dict)
+    assert unflatten(flat_dict, splitter=splitter) == normal_dict
+
+
+def test_unflatten_dict_inverse_with_duplicated_value(flat_tuple_dict, inv_flat_tuple_dict):
+    inv_flat_tuple_dict['2.1.1'] = ('c', 'b', 'a')
+    with pytest.raises(ValueError):
+        unflatten(inv_flat_tuple_dict, inverse=True)
+
+
+@pytest.fixture
+def dict_with_list():
+    return {
+        'a': '0',
+        'b': {
+            'a': '1.0',
+            'b': '1.1',
+        },
+        'c': {
+            'a': '2.0',
+            'b': {
+                'a': '2.1.0',
+                'b': ['2.1.1.0', '2.1.1.1'],
+            },
+        },
+    }
+
+
+@pytest.fixture
+def flat_tuple_dict_with_list():
+    return{
+        ('a',): '0',
+        ('b', 'a'): '1.0',
+        ('b', 'b'): '1.1',
+        ('c', 'a'): '2.0',
+        ('c', 'b', 'a'): '2.1.0',
+        ('c', 'b', 'b'): ['2.1.1.0', '2.1.1.1'],
+    }
+
+
+def test_flatten_dict_with_list(dict_with_list, flat_tuple_dict_with_list):
+    assert flatten(dict_with_list) == flat_tuple_dict_with_list
+
+
+@pytest.mark.parametrize(
+    'reducer, expected_flat_dict_func',
+    [
+        ('tuple', get_flat_tuple_dict),
+        ('path', get_flat_path_dict),
+        ('underscore', get_flat_underscore_dict),
+        (tuple_reducer, get_flat_tuple_dict),
+        (path_reducer, get_flat_path_dict),
+        (underscore_reducer, get_flat_underscore_dict),
+    ],
+)
+def test_flatten_dict_with_list_with_reducer(
+        dict_with_list, flat_tuple_dict_with_list, reducer, expected_flat_dict_func):
+    expected_flat_dict = expected_flat_dict_func(flat_tuple_dict_with_list)
+    assert flatten(dict_with_list, reducer=reducer) == expected_flat_dict
+
+
+def test_unflatten_dict_with_list(dict_with_list, flat_tuple_dict_with_list):
+    assert unflatten(flat_tuple_dict_with_list) == dict_with_list
+
+
+@pytest.mark.parametrize(
+    'splitter, flat_dict_func',
+    [
+        ('tuple', get_flat_tuple_dict),
+        ('path', get_flat_path_dict),
+        ('underscore', get_flat_underscore_dict),
+        (tuple_splitter, get_flat_tuple_dict),
+        (path_splitter, get_flat_path_dict),
+        (underscore_splitter, get_flat_underscore_dict),
+    ],
+)
+def test_unflatten_dict_with_list_with_splitter(
+        dict_with_list, flat_tuple_dict_with_list, splitter, flat_dict_func):
+    flat_dict = flat_dict_func(flat_tuple_dict_with_list)
+    assert unflatten(flat_dict, splitter=splitter) == dict_with_list
+
+
+@pytest.fixture
+def flat_tuple_dict_with_enumerated_list():
+    return {
+        ('a',): '0',
+        ('b', 'a'): '1.0',
+        ('b', 'b'): '1.1',
+        ('c', 'a'): '2.0',
+        ('c', 'b', 'a'): '2.1.0',
+        ('c', 'b', 'b', 0): '2.1.1.0',
+        ('c', 'b', 'b', 1): '2.1.1.1',
+    }
+
+
+def test_flatten_dict_with_list_with_enumerate_types(
+        dict_with_list, flat_tuple_dict_with_enumerated_list):
+    assert flatten(dict_with_list, enumerate_types=(list,)) == flat_tuple_dict_with_enumerated_list
+
+
+def test_flatten_list():
+    assert flatten([1, 2], enumerate_types=(list,)) == {(0,): 1, (1,): 2}
