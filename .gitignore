@@ -44,6 +44,7 @@ nosetests.xml
 coverage.xml
 *,cover
 .hypothesis/
+.pytest_cache/
 
 # Translations
 *.mo
@@ -90,5 +91,3 @@ ENV/
 
 # VS Code settings
 .vscode
-
-.noseids
