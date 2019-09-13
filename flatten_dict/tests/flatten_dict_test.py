@@ -2,7 +2,7 @@ from __future__ import absolute_import
 import os.path
 
 import six
-from nose.tools import assert_raises
+import pytest
 
 from flatten_dict import flatten, unflatten
 from flatten_dict.reducer import tuple_reducer
@@ -39,7 +39,7 @@ def test_flatten_dict():
 
 
 def test_flatten_nonflattenable_type():
-    with assert_raises(ValueError):
+    with pytest.raises(ValueError):
         flatten([])
 
 
@@ -65,7 +65,7 @@ def test_flatten_dict_underscore():
 def test_flatten_dict_inverse_with_duplicated_value():
     dup_val_dict = normal_dict.copy()
     dup_val_dict['a'] = '2.1.1'
-    with assert_raises(ValueError):
+    with pytest.raises(ValueError):
         flatten(dup_val_dict, inverse=True)
 
 
@@ -95,7 +95,7 @@ def test_unflatten_dict_underscore():
 def test_unflatten_dict_inverse_with_duplicated_value():
     inv_flat_normal_dict = {v: k for k, v in six.viewitems(flat_normal_dict)}
     inv_flat_normal_dict['2.1.1'] = ('c', 'b', 'a')
-    with assert_raises(ValueError):
+    with pytest.raises(ValueError):
         unflatten(inv_flat_normal_dict, inverse=True)
 
 
