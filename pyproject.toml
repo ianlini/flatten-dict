@@ -15,7 +15,6 @@ classifiers = [
 python = "~2.7 || ^3.5"
 six = "^1.12"
 pathlib2 = "^2.3"
-doc8 = "^0.8.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^4.6"

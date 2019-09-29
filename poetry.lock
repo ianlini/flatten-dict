@@ -15,7 +15,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 version = "19.1.0"
 
 [[package]]
-category = "main"
+category = "dev"
 description = "Universal encoding detector for Python 2 and 3"
 name = "chardet"
 optional = false
@@ -58,7 +58,7 @@ python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*, <4"
 version = "4.5.4"
 
 [[package]]
-category = "main"
+category = "dev"
 description = "Style checker for Sphinx (or other) RST documentation"
 name = "doc8"
 optional = false
@@ -73,7 +73,7 @@ six = "*"
 stevedore = "*"
 
 [[package]]
-category = "main"
+category = "dev"
 description = "Docutils -- Python Documentation Utilities"
 name = "docutils"
 optional = false
@@ -232,7 +232,7 @@ python = "<3.5"
 version = "*"
 
 [[package]]
-category = "main"
+category = "dev"
 description = "Python Build Reasonableness"
 name = "pbr"
 optional = false
@@ -320,7 +320,7 @@ python = "<3.6"
 version = ">=2.2.0"
 
 [[package]]
-category = "main"
+category = "dev"
 description = "reStructuredText linter"
 name = "restructuredtext-lint"
 optional = false
@@ -348,7 +348,7 @@ python-versions = ">=2.6, !=3.0.*, !=3.1.*"
 version = "1.12.0"
 
 [[package]]
-category = "main"
+category = "dev"
 description = "Manage dynamic plugins for Python applications"
 name = "stevedore"
 optional = false
@@ -425,7 +425,7 @@ version = "0.6.0"
 more-itertools = "*"
 
 [metadata]
-content-hash = "55a2e9c2646cdd065762b6e334c582a546f826bbbdcdfe1b3a09383835c1a8ec"
+content-hash = "28c473be28ffc3a37208c0c290cfd29d3313b10ea4cf50c8680f2ae0a38e1644"
 python-versions = "~2.7 || ^3.5"
 
 [metadata.hashes]
