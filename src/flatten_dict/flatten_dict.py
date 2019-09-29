@@ -22,7 +22,7 @@ SPLITTER_DICT = {
 }
 
 
-def flatten(d, reducer='tuple', inverse=False, enumerate_types=()):
+def flatten(d, reducer='tuple', inverse=False, enumerate_types=(), keep_empty_types=()):
     """Flatten `Mapping` object.
 
     Parameters
@@ -41,6 +41,15 @@ def flatten(d, reducer='tuple', inverse=False, enumerate_types=()):
         Flatten these types using `enumerate`.
         For example, if we set `enumerate_types` to ``(list,)``,
         `list` indices become keys: ``{'a': ['b', 'c']}`` -> ``{('a', 0): 'b', ('a', 1): 'c'}``.
+    keep_empty_types : Sequence[type]
+        By default, ``flatten({1: 2, 3: {}})`` will give you ``{(1,): 2}``, that is, the key ``3``
+        will disappear.
+        This is also applied for the types in `enumerate_types`, that is,
+        ``flatten({1: 2, 3: []}, enumerate_types=(list,))`` will give you ``{(1,): 2}``.
+        If you want to keep those empty values, you can specify the types in `keep_empty_types`:
+
+        >>> flatten({1: 2, 3: {}}, keep_empty_types=(dict,))
+        {(1,): 2, (3,): {}}
 
     Returns
     -------
@@ -61,13 +70,20 @@ def flatten(d, reducer='tuple', inverse=False, enumerate_types=()):
         for key, value in key_value_iterable:
             flat_key = reducer(parent, key)
             if isinstance(value, flattenable_types):
-                _flatten(value, flat_key)
-            else:
-                if inverse:
-                    flat_key, value = value, flat_key
-                if flat_key in flat_dict:
-                    raise ValueError("duplicated key '{}'".format(flat_key))
-                flat_dict[flat_key] = value
+                if value:
+                    # recursively build the result
+                    _flatten(value, flat_key)
+                    continue
+                elif not isinstance(value, keep_empty_types):
+                    # ignore the key that has an empty value
+                    continue
+
+            # add an item to the result
+            if inverse:
+                flat_key, value = value, flat_key
+            if flat_key in flat_dict:
+                raise ValueError("duplicated key '{}'".format(flat_key))
+            flat_dict[flat_key] = value
 
     _flatten(d)
     return flat_dict

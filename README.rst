@@ -25,7 +25,7 @@ Flatten
 
 .. code-block:: python
 
-   def flatten(d, reducer='tuple', inverse=False, enumerate_types=()):
+   def flatten(d, reducer='tuple', inverse=False, enumerate_types=(), keep_empty_types=()):
        """Flatten `Mapping` object.
 
        Parameters
@@ -44,6 +44,15 @@ Flatten
            Flatten these types using `enumerate`.
            For example, if we set `enumerate_types` to ``(list,)``,
            `list` indices become keys: ``{'a': ['b', 'c']}`` -> ``{('a', 0): 'b', ('a', 1): 'c'}``.
+       keep_empty_types : Sequence[type]
+           By default, ``flatten({1: 2, 3: {}})`` will give you ``{(1,): 2}``, that is, the key ``3``
+           will disappear.
+           This is also applied for the types in `enumerate_types`, that is,
+           ``flatten({1: 2, 3: []}, enumerate_types=(list,))`` will give you ``{(1,): 2}``.
+           If you want to keep those empty values, you can specify the types in `keep_empty_types`:
+
+           >>> flatten({1: 2, 3: {}}, keep_empty_types=(dict,))
+           {(1,): 2, (3,): {}}
 
        Returns
        -------
@@ -144,6 +153,20 @@ We can even flatten a `list` directly:
    {(0,): 1,
     (1,): 2,
     (2,): 3}
+
+If there is an empty dict in the values, by default, it will disappear after flattened:
+
+.. code-block:: python
+
+   In [4]: flatten({1: 2, 3: {}})
+   Out[4]: {(1,): 2}
+
+We can keep the empty dict in the result using ``keep_empty_types=(dict,)``:
+
+.. code-block:: python
+
+   In [5]: flatten({1: 2, 3: {}}, keep_empty_types=(dict,))
+   Out[5]: {(1,): 2, (3,): {}}
 
 Unflatten
 `````````
