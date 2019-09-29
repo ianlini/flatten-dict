@@ -1,0 +1,27 @@
+[tool.poetry]
+name = "flatten-dict"
+version = "0.2.0dev0"
+description = "A flexible utility for flattening and unflattening dict-like objects in Python."
+authors = ["Ian Lin <you@example.com>"]
+license = "MIT"
+readme = "README.rst"
+repository = "https://github.com/ianlini/flatten-dict"
+homepage = "https://github.com/ianlini/flatten-dict"
+classifiers = [
+    'Topic :: Utilities',
+]
+
+[tool.poetry.dependencies]
+python = "~2.7 || ^3.5"
+six = "^1.12"
+pathlib2 = "^2.3"
+
+[tool.poetry.dev-dependencies]
+pytest = "^4.6"
+flake8 = "^3.7"
+tox = "^3.14"
+coverage = "^4.5"
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"

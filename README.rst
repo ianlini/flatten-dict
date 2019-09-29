@@ -6,6 +6,8 @@ flatten-dict
    :target: https://pypi.python.org/pypi/flatten-dict
 .. image:: https://img.shields.io/pypi/l/flatten-dict.svg
    :target: https://pypi.python.org/pypi/flatten-dict
+.. image:: https://img.shields.io/github/stars/ianlini/flatten-dict.svg?style=social
+   :target: https://github.com/ianlini/flatten-dict
 
 A flexible utility for flattening and unflattening dict-like objects in Python.
 
