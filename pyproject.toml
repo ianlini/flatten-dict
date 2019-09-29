@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "flatten-dict"
-version = "0.2.0dev"
+version = "0.2.0dev0"
 description = "A flexible utility for flattening and unflattening dict-like objects in Python."
 authors = ["Ian Lin <you@example.com>"]
 license = "MIT"
