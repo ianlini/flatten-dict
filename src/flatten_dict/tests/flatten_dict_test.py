@@ -214,3 +214,48 @@ def test_flatten_dict_with_list_with_enumerate_types(
 
 def test_flatten_list():
     assert flatten([1, 2], enumerate_types=(list,)) == {(0,): 1, (1,): 2}
+
+
+@pytest.fixture
+def dict_with_empty_dict():
+    return {
+        'a': '0',
+        'b': {
+            'a': '1.0',
+            'b': '1.1',
+        },
+        'c': {
+            'a': '2.0',
+            'b': {
+                'a': '2.1.0',
+                'b': '2.1.1',
+                'c': {},
+            },
+        },
+    }
+
+
+@pytest.fixture
+def flat_tuple_dict_with_empty_dict():
+    return {
+        ('a',): '0',
+        ('b', 'a'): '1.0',
+        ('b', 'b'): '1.1',
+        ('c', 'a'): '2.0',
+        ('c', 'b', 'a'): '2.1.0',
+        ('c', 'b', 'b'): '2.1.1',
+        ('c', 'b', 'c'): {},
+    }
+
+
+def test_flatten_dict_with_empty_dict(dict_with_empty_dict, flat_tuple_dict):
+    assert flatten(dict_with_empty_dict) == flat_tuple_dict
+
+
+def test_flatten_dict_with_empty_dict_kept(dict_with_empty_dict, flat_tuple_dict_with_empty_dict):
+    assert (flatten(dict_with_empty_dict, keep_empty_types=(dict,))
+            == flat_tuple_dict_with_empty_dict)
+
+
+def test_flatten_dict_with_keep_empty_types(normal_dict, flat_tuple_dict):
+    assert flatten(normal_dict, keep_empty_types=(dict, str)) == flat_tuple_dict
