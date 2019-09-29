@@ -41,6 +41,15 @@ def flatten(d, reducer='tuple', inverse=False, enumerate_types=(), keep_empty_ty
         Flatten these types using `enumerate`.
         For example, if we set `enumerate_types` to ``(list,)``,
         `list` indices become keys: ``{'a': ['b', 'c']}`` -> ``{('a', 0): 'b', ('a', 1): 'c'}``.
+    keep_empty_types : Sequence[type]
+        By default, ``flatten({1: 2, 3: {}})`` will give you ``{(1,): 2}``, that is, the key ``3``
+        will disappear.
+        This is also applied for the types in `enumerate_types`, that is,
+        ``flatten({1: 2, 3: []}, enumerate_types=(list,))`` will give you ``{(1,): 2}``.
+        If you want to keep those empty values, you can specify the types in `keep_empty_types`:
+
+        >>> flatten({1: 2, 3: {}}, keep_empty_types=(dict,))
+        {(1,): 2, (3,): {}}
 
     Returns
     -------
