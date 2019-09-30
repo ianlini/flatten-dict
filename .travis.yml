@@ -16,7 +16,7 @@ matrix:
       env: TOXENV=flake8
 
 install:
-  - pip install -U pip wheel setuptools
+  - pip install -U pip wheel
   - pip install -U Cython
   - pip install -U tox-travis tox
 
