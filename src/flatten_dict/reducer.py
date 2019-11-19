@@ -13,6 +13,13 @@ def path_reducer(k1, k2):
         return os.path.join(k1, k2)
 
 
+def dot_reducer(k1, k2):
+    if k1 is None:
+        return k2
+    else:
+        return '.'.join([k1, k2])
+
+
 def underscore_reducer(k1, k2):
     if k1 is None:
         return k2
