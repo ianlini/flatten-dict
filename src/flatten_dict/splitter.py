@@ -11,7 +11,7 @@ def path_splitter(flat_key):
 
 
 def dot_splitter(flat_key):
-    keys = flat_key.split('.')
+    keys = tuple(flat_key.split('.'))
     return keys
 
 
