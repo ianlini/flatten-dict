@@ -5,19 +5,21 @@ except ImportError:
 
 import six
 
-from .reducer import tuple_reducer, path_reducer, underscore_reducer
-from .splitter import tuple_splitter, path_splitter, underscore_splitter
+from .reducer import tuple_reducer, path_reducer, dot_reducer, underscore_reducer
+from .splitter import tuple_splitter, path_splitter, dot_splitter, underscore_splitter
 
 
 REDUCER_DICT = {
     'tuple': tuple_reducer,
     'path': path_reducer,
+    'dot': dot_reducer,
     'underscore': underscore_reducer,
 }
 
 SPLITTER_DICT = {
     'tuple': tuple_splitter,
     'path': path_splitter,
+    'dot': dot_splitter,
     'underscore': underscore_splitter,
 }
 

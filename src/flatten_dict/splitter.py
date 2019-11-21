@@ -10,6 +10,11 @@ def path_splitter(flat_key):
     return keys
 
 
+def dot_splitter(flat_key):
+    keys = tuple(flat_key.split('.'))
+    return keys
+
+
 def underscore_splitter(flat_key):
     keys = tuple(flat_key.split("_"))
     return keys
