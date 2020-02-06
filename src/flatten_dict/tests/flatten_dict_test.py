@@ -2,6 +2,7 @@ from __future__ import absolute_import
 import os.path
 
 import six
+import json
 import pytest
 
 from flatten_dict import flatten, unflatten
@@ -39,6 +40,17 @@ def flat_tuple_dict():
     }
 
 
+@pytest.fixture
+def flat_tuple_dict_depth2():
+    return {
+        ('a',): '0',
+        ('b', 'a'): '1.0',
+        ('b', 'b'): '1.1',
+        ('c', 'a'): '2.0',
+        ('c', 'b'): {'a': '2.1.0', 'b': '2.1.1'},
+    }
+
+
 def get_flat_tuple_dict(flat_tuple_dict):
     return flat_tuple_dict
 
@@ -58,6 +70,21 @@ def inv_flat_tuple_dict(flat_tuple_dict):
 
 def test_flatten_dict(normal_dict, flat_tuple_dict):
     assert flatten(normal_dict) == flat_tuple_dict
+
+
+def test_flatten_dict_depth_limit(normal_dict, flat_tuple_dict_depth2):
+    assert flatten(normal_dict, max_depth=2) == flat_tuple_dict_depth2
+
+
+def test_flatten_dict_irrelevant_depth_limit(normal_dict, flat_tuple_dict):
+    assert flatten(normal_dict, max_depth=3) == flat_tuple_dict
+
+
+def test_flatten_dict_zero_depth_limit(normal_dict):
+    flattened = flatten(normal_dict, max_depth=0)
+    values_before = sorted(flattened.values(), key=lambda x: json.dumps(x, sort_keys=True))
+    values_after = sorted(normal_dict.values(), key=lambda x: json.dumps(x, sort_keys=True))
+    assert values_before == values_after
 
 
 def test_flatten_nonflattenable_type():
@@ -142,7 +169,7 @@ def dict_with_list():
 
 @pytest.fixture
 def flat_tuple_dict_with_list():
-    return{
+    return {
         ('a',): '0',
         ('b', 'a'): '1.0',
         ('b', 'b'): '1.1',
@@ -152,8 +179,37 @@ def flat_tuple_dict_with_list():
     }
 
 
+@pytest.fixture
+def flat_tuple_dict_with_list_depth2():
+    return {
+        ('a',): '0',
+        ('b', 'a'): '1.0',
+        ('b', 'b'): '1.1',
+        ('c', 'a'): '2.0',
+        ('c', 'b'): {
+            'a': '2.1.0',
+            'b': ['2.1.1.0', '2.1.1.1'],
+        },
+    }
+
+
 def test_flatten_dict_with_list(dict_with_list, flat_tuple_dict_with_list):
     assert flatten(dict_with_list) == flat_tuple_dict_with_list
+
+
+def test_flatten_dict_with_list_depth_limit(dict_with_list, flat_tuple_dict_with_list_depth2):
+    assert flatten(dict_with_list, max_depth=2) == flat_tuple_dict_with_list_depth2
+
+
+def test_flatten_dict_with_list_irrelevant_depth_limit(dict_with_list, flat_tuple_dict_with_list):
+    assert flatten(dict_with_list, max_depth=3) == flat_tuple_dict_with_list
+
+
+def test_flatten_dict_with_list_zero_depth_limit(dict_with_list):
+    flattened = flatten(dict_with_list, max_depth=0)
+    values_before = sorted(flattened.values(), key=lambda x: json.dumps(x, sort_keys=True))
+    values_after = sorted(dict_with_list.values(), key=lambda x: json.dumps(x, sort_keys=True))
+    assert values_before == values_after
 
 
 @pytest.mark.parametrize(
