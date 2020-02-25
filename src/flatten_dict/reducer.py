@@ -10,7 +10,7 @@ def path_reducer(k1, k2):
     if k1 is None:
         return k2
     else:
-        return os.path.join(k1, k2)
+        return os.path.join(str(k1), str(k2))
 
 
 def dot_reducer(k1, k2):
