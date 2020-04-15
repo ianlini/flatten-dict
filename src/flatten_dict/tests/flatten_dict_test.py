@@ -5,8 +5,8 @@ import six
 import pytest
 
 from flatten_dict import flatten, unflatten
-from flatten_dict.reducer import tuple_reducer, path_reducer, underscore_reducer
-from flatten_dict.splitter import tuple_splitter, path_splitter, underscore_splitter
+from flatten_dict.reducer import tuple_reducer, path_reducer, underscore_reducer, make_reducer, dot_reducer
+from flatten_dict.splitter import tuple_splitter, path_splitter, underscore_splitter, dot_splitter, make_splitter
 
 
 @pytest.fixture
@@ -259,3 +259,32 @@ def test_flatten_dict_with_empty_dict_kept(dict_with_empty_dict, flat_tuple_dict
 
 def test_flatten_dict_with_keep_empty_types(normal_dict, flat_tuple_dict):
     assert flatten(normal_dict, keep_empty_types=(dict, str)) == flat_tuple_dict
+
+
+@pytest.mark.parametrize(
+    "delim, delim_equiv",
+    [
+        (".", "dot"),
+        ("_", "underscore"),
+    ]
+)
+def test_make_reducer(normal_dict, delim, delim_equiv):
+    reducer = make_reducer(delim)
+    flattened_dict_using_make_reducer = flatten(normal_dict, reducer=reducer)
+    flattened_dict_using_equivalent_reducer = flatten(normal_dict, reducer=delim_equiv)
+    assert flattened_dict_using_make_reducer == flattened_dict_using_equivalent_reducer
+
+
+@pytest.mark.parametrize(
+    "delim, delim_equiv",
+    [
+        (".", "dot"),
+        ("_", "underscore")
+    ]
+)
+def test_make_splitter(normal_dict, delim, delim_equiv):
+    splitter = make_splitter(delim)
+    flat_dict = flatten(normal_dict, delim_equiv)
+    unflattened_dict_using_make_splitter = unflatten(flat_dict, splitter=splitter)
+    unflattened_dict_using_equivalent_splitter = unflatten(flat_dict, splitter=delim_equiv)
+    assert unflattened_dict_using_make_splitter == unflattened_dict_using_equivalent_splitter

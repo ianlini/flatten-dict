@@ -18,3 +18,15 @@ def dot_splitter(flat_key):
 def underscore_splitter(flat_key):
     keys = tuple(flat_key.split("_"))
     return keys
+
+
+def make_splitter(delim):
+    """Create a splitter with a custom delimiter.
+
+    :param delim: delimiter to use to split keys. 
+    :return: callable: callable that can be passed to ``unflatten``'s ``splitter`` argument.
+    """
+    def f(flat_key):
+        keys = tuple(flat_key.split(delim))
+        return keys
+    return f
