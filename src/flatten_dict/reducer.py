@@ -30,8 +30,15 @@ def underscore_reducer(k1, k2):
 def make_reducer(delimiter):
     """Create a reducer with a custom delimiter.
 
-    :param delimiter: delimiter to use to join keys.
-    :return: callable: callable that can be passed to ``flatten``'s ``reducer`` argument.
+    Parameters
+    ----------
+    delimiter : str
+        Delimiter to use to join keys.
+
+    Returns
+    -------
+    f : callable
+        Callable that can be passed to `flatten()`'s `reducer` argument.
     """
 
     def f(k1, k2):
