@@ -20,13 +20,13 @@ def underscore_splitter(flat_key):
     return keys
 
 
-def make_splitter(delim):
+def make_splitter(delimiter):
     """Create a splitter with a custom delimiter.
 
-    :param delim: delimiter to use to split keys. 
+    :param delimiter: delimiter to use to split keys. 
     :return: callable: callable that can be passed to ``unflatten``'s ``splitter`` argument.
     """
     def f(flat_key):
-        keys = tuple(flat_key.split(delim))
+        keys = tuple(flat_key.split(delimiter))
         return keys
     return f

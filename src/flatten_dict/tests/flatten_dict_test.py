@@ -262,29 +262,29 @@ def test_flatten_dict_with_keep_empty_types(normal_dict, flat_tuple_dict):
 
 
 @pytest.mark.parametrize(
-    "delim, delim_equiv",
+    "delimiter, delimiter_equivalent",
     [
         (".", "dot"),
         ("_", "underscore"),
     ]
 )
-def test_make_reducer(normal_dict, delim, delim_equiv):
-    reducer = make_reducer(delim)
+def test_make_reducer(normal_dict, delimiter, delimiter_equivalent):
+    reducer = make_reducer(delimiter)
     flattened_dict_using_make_reducer = flatten(normal_dict, reducer=reducer)
-    flattened_dict_using_equivalent_reducer = flatten(normal_dict, reducer=delim_equiv)
+    flattened_dict_using_equivalent_reducer = flatten(normal_dict, reducer=delimiter_equivalent)
     assert flattened_dict_using_make_reducer == flattened_dict_using_equivalent_reducer
 
 
 @pytest.mark.parametrize(
-    "delim, delim_equiv",
+    "delimiter, delimiter_equivalent",
     [
         (".", "dot"),
         ("_", "underscore")
     ]
 )
-def test_make_splitter(normal_dict, delim, delim_equiv):
-    splitter = make_splitter(delim)
-    flat_dict = flatten(normal_dict, delim_equiv)
+def test_make_splitter(normal_dict, delimiter, delimiter_equivalent):
+    splitter = make_splitter(delimiter)
+    flat_dict = flatten(normal_dict, delimiter_equivalent)
     unflattened_dict_using_make_splitter = unflatten(flat_dict, splitter=splitter)
-    unflattened_dict_using_equivalent_splitter = unflatten(flat_dict, splitter=delim_equiv)
+    unflattened_dict_using_equivalent_splitter = unflatten(flat_dict, splitter=delimiter_equivalent)
     assert unflattened_dict_using_make_splitter == unflattened_dict_using_equivalent_splitter

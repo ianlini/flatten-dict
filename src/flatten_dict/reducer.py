@@ -27,10 +27,10 @@ def underscore_reducer(k1, k2):
         return "{0}_{1}".format(k1, k2)
 
 
-def make_reducer(delim):
+def make_reducer(delimiter):
     """Create a reducer with a custom delimiter.
 
-    :param delim: delimiter to use to join keys.
+    :param delimiter: delimiter to use to join keys.
     :return: callable: callable that can be passed to ``flatten``'s ``reducer`` argument.
     """
 
@@ -38,6 +38,6 @@ def make_reducer(delim):
         if k1 is None:
             return k2
         else:
-            return f"{k1}{delim}{k2}"
+            return f"{k1}{delimiter}{k2}"
 
     return f
