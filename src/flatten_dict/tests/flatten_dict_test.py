@@ -5,8 +5,8 @@ import six
 import pytest
 
 from flatten_dict import flatten, unflatten
-from flatten_dict.reducer import tuple_reducer, path_reducer, underscore_reducer, make_reducer, dot_reducer
-from flatten_dict.splitter import tuple_splitter, path_splitter, underscore_splitter, dot_splitter, make_splitter
+from flatten_dict.reducer import tuple_reducer, path_reducer, underscore_reducer, make_reducer
+from flatten_dict.splitter import tuple_splitter, path_splitter, underscore_splitter, make_splitter
 
 
 @pytest.fixture
@@ -286,5 +286,6 @@ def test_make_splitter(normal_dict, delimiter, delimiter_equivalent):
     splitter = make_splitter(delimiter)
     flat_dict = flatten(normal_dict, delimiter_equivalent)
     unflattened_dict_using_make_splitter = unflatten(flat_dict, splitter=splitter)
-    unflattened_dict_using_equivalent_splitter = unflatten(flat_dict, splitter=delimiter_equivalent)
+    unflattened_dict_using_equivalent_splitter = unflatten(
+        flat_dict, splitter=delimiter_equivalent)
     assert unflattened_dict_using_make_splitter == unflattened_dict_using_equivalent_splitter
