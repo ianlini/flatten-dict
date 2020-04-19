@@ -17,14 +17,14 @@ def dot_reducer(k1, k2):
     if k1 is None:
         return k2
     else:
-        return "{0}.{1}".format(k1, k2)
+        return "{}.{}".format(k1, k2)
 
 
 def underscore_reducer(k1, k2):
     if k1 is None:
         return k2
     else:
-        return "{0}_{1}".format(k1, k2)
+        return "{}_{}".format(k1, k2)
 
 
 def make_reducer(delimiter):
@@ -45,6 +45,6 @@ def make_reducer(delimiter):
         if k1 is None:
             return k2
         else:
-            return f"{k1}{delimiter}{k2}"
+            return "{}{}{}".format(k1, delimiter, k2)
 
     return f
