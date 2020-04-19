@@ -14,8 +14,16 @@ A flexible utility for flattening and unflattening dict-like objects in Python.
 
 Introduction
 ------------
-This Python package provide a function ``flatten()`` for flattening dict-like objects.
-It also provides some key joining methods (reducer), and you can choose the reducer you want or even implement your own reducer. You can also choose to invert the resulting flat dict.
+This package provides a function ``flatten()`` for flattening dict-like objects in Python 2.7 and 3.5~3.8.
+It also provides some key joining methods (reducer), and you can choose the reducer you want or even implement your own reducer.
+You can also invert the resulting flat dict using ``unflatten()``.
+
+Installation
+------------
+
+.. code-block:: bash
+
+   pip install flatten-dict
 
 Documentation
 -------------
@@ -32,12 +40,13 @@ Flatten
        ----------
        d : dict-like object
            The dict that will be flattened.
-       reducer : {'tuple', 'path', 'underscore', Callable}
+       reducer : {'tuple', 'path', 'underscore', 'dot', Callable}
            The key joining method. If a `Callable` is given, the `Callable` will be
            used to reduce.
            'tuple': The resulting key will be tuple of the original keys.
            'path': Use `os.path.join` to join keys.
            'underscore': Use underscores to join keys.
+           'dot': Use dots to join keys.
        inverse : bool
            Whether you want invert the resulting key and value.
        enumerate_types : Sequence[type]
@@ -62,111 +71,95 @@ Flatten
 Examples
 ::::::::
 
-.. code-block:: python
+>>> from flatten_dict import flatten
+>>> from pprint import pprint
+>>> normal_dict = {
+...     'a': '0',
+...     'b': {
+...         'a': '1.0',
+...         'b': '1.1',
+...     },
+...     'c': {
+...         'a': '2.0',
+...         'b': {
+...             'a': '2.1.0',
+...             'b': '2.1.1',
+...         },
+...     },
+... }
+>>> pprint(flatten(normal_dict))
+{('a',): '0',
+ ('b', 'a'): '1.0',
+ ('b', 'b'): '1.1',
+ ('c', 'a'): '2.0',
+ ('c', 'b', 'a'): '2.1.0',
+ ('c', 'b', 'b'): '2.1.1'}
+>>> pprint(flatten(normal_dict, reducer='path'))
+{'a': '0',
+ 'b/a': '1.0',
+ 'b/b': '1.1',
+ 'c/a': '2.0',
+ 'c/b/a': '2.1.0',
+ 'c/b/b': '2.1.1'}
+>>> pprint(flatten(normal_dict, reducer='path', inverse=True))
+{'0': 'a',
+ '1.0': 'b/a',
+ '1.1': 'b/b',
+ '2.0': 'c/a',
+ '2.1.0': 'c/b/a',
+ '2.1.1': 'c/b/b'}
 
-   In [1]: from flatten_dict import flatten
+The reducer parameter supports ``'tuple'``, ``'path'``, ``'underscore'``, ``'dot'`` and `Callable`. We can customize the reducer using a function:
 
-   In [2]: normal_dict = {
-      ...:     'a': '0',
-      ...:     'b': {
-      ...:         'a': '1.0',
-      ...:         'b': '1.1',
-      ...:     },
-      ...:     'c': {
-      ...:         'a': '2.0',
-      ...:         'b': {
-      ...:             'a': '2.1.0',
-      ...:             'b': '2.1.1',
-      ...:         },
-      ...:     },
-      ...: }
+>>> def underscore_reducer(k1, k2):
+...     if k1 is None:
+...         return k2
+...     else:
+...         return k1 + "_" + k2
+...
+>>> pprint(flatten(normal_dict, reducer=underscore_reducer))
+{'a': '0',
+ 'b_a': '1.0',
+ 'b_b': '1.1',
+ 'c_a': '2.0',
+ 'c_b_a': '2.1.0',
+ 'c_b_b': '2.1.1'}
 
-   In [3]: flatten(normal_dict)
-   Out[3]:
-   {('a',): '0',
-    ('b', 'a'): '1.0',
-    ('b', 'b'): '1.1',
-    ('c', 'a'): '2.0',
-    ('c', 'b', 'a'): '2.1.0',
-    ('c', 'b', 'b'): '2.1.1'}
+There is also a factory function `make_reducer()` to help you create customized reducer. The function currently only supports customized delimiter:
 
-   In [4]: flatten(normal_dict, reducer='path')
-   Out[4]:
-   {'a': '0',
-    'b/a': '1.0',
-    'b/b': '1.1',
-    'c/a': '2.0',
-    'c/b/a': '2.1.0',
-    'c/b/b': '2.1.1'}
-
-   In [5]: flatten(normal_dict, reducer='path', inverse=True)
-   Out[5]:
-   {'0': 'a',
-    '1.0': 'b/a',
-    '1.1': 'b/b',
-    '2.0': 'c/a',
-    '2.1.0': 'c/b/a',
-    '2.1.1': 'c/b/b'}
-
-   In [6]: def underscore_reducer(k1, k2):
-      ...:     if k1 is None:
-      ...:         return k2
-      ...:     else:
-      ...:         return k1 + "_" + k2
-      ...:
-
-   In [7]: flatten(normal_dict, reducer=underscore_reducer)
-   Out[7]:
-   {'a': '0',
-    'b_a': '1.0',
-    'b_b': '1.1',
-    'c_a': '2.0',
-    'c_b_a': '2.1.0',
-    'c_b_b': '2.1.1'}
+>>> from flatten_dict.reducer import make_reducer
+>>> pprint(flatten(normal_dict, reducer=make_reducer(delimiter='_')))
+{'a': '0',
+ 'b_a': '1.0',
+ 'b_b': '1.1',
+ 'c_a': '2.0',
+ 'c_b_a': '2.1.0',
+ 'c_b_b': '2.1.1'}
 
 If we have some iterable (e.g., `list`) in the `dict`, we will normally get this:
 
-.. code-block:: python
-
-   In [8]: flatten({'a': [1, 2, 3], 'b': 'c'})
-   Out[8]:
-   {('a',): [1, 2, 3],
-    ('b',): 'c'}
+>>> flatten({'a': [1, 2, 3], 'b': 'c'})
+{('a',): [1, 2, 3], ('b',): 'c'}
 
 If we want to use its indices as keys, then we can use the parameter `enumerate_types`:
 
-.. code-block:: python
-
-   In [9]: flatten({'a': [1, 2, 3], 'b': 'c'}, enumerate_types=(list,))
-   Out[9]:
-   {('a', 0): 1,
-    ('a', 1): 2,
-    ('a', 2): 3,
-    ('b',): 'c'}
+>>> flatten({'a': [1, 2, 3], 'b': 'c'}, enumerate_types=(list,))
+{('a', 0): 1, ('a', 1): 2, ('a', 2): 3, ('b',): 'c'}
 
 We can even flatten a `list` directly:
 
-.. code-block:: python
-
-   In [10]: flatten([1, 2, 3], enumerate_types=(list,))
-   Out[10]:
-   {(0,): 1,
-    (1,): 2,
-    (2,): 3}
+>>> flatten([1, 2, 3], enumerate_types=(list,))
+{(0,): 1, (1,): 2, (2,): 3}
 
 If there is an empty dict in the values, by default, it will disappear after flattened:
 
-.. code-block:: python
-
-   In [4]: flatten({1: 2, 3: {}})
-   Out[4]: {(1,): 2}
+>>> flatten({1: 2, 3: {}})
+{(1,): 2}
 
 We can keep the empty dict in the result using ``keep_empty_types=(dict,)``:
 
-.. code-block:: python
-
-   In [5]: flatten({1: 2, 3: {}}, keep_empty_types=(dict,))
-   Out[5]: {(1,): 2, (3,): {}}
+>>> flatten({1: 2, 3: {}}, keep_empty_types=(dict,))
+{(1,): 2, (3,): {}}
 
 Unflatten
 `````````
@@ -180,12 +173,13 @@ Unflatten
        ----------
        d : dict-like object
            The dict that will be unflattened.
-       splitter : {'tuple', 'path', 'underscore', Callable}
+       splitter : {'tuple', 'path', 'underscore', 'dot', Callable}
            The key splitting method. If a Callable is given, the Callable will be
            used to split.
            'tuple': Use each element in the tuple key as the key of the unflattened dict.
            'path': Use `pathlib.Path.parts` to split keys.
            'underscore': Use underscores to split keys.
+           'dot': Use underscores to split keys.
        inverse : bool
            Whether you want to invert the key and value before flattening.
 

@@ -30,7 +30,7 @@ def make_splitter(delimiter):
 
     Returns
     -------
-    f : callable
+    f : Callable
         Callable that can be passed to ``unflatten``'s ``splitter`` argument.
     """
     def f(flat_key):
