@@ -121,7 +121,7 @@ def unflatten(d, splitter='tuple', inverse=False):
         The dict that will be unflattened.
     splitter : {'tuple', 'path', 'underscore', 'dot', Callable}
         The key splitting method. If a Callable is given, the Callable will be
-        used to split.
+        used to split `d`.
         'tuple': Use each element in the tuple key as the key of the unflattened dict.
         'path': Use `pathlib.Path.parts` to split keys.
         'underscore': Use underscores to split keys.

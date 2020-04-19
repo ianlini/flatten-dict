@@ -109,7 +109,7 @@ Examples
  '2.1.0': 'c/b/a',
  '2.1.1': 'c/b/b'}
 
-The reducer parameter supports ``'tuple'``, ``'path'``, ``'underscore'``, ``'dot'`` and `Callable`. We can customize the reducer using a function:
+The `reducer` parameter supports ``'tuple'``, ``'path'``, ``'underscore'``, ``'dot'`` and `Callable`. We can customize the reducer using a function:
 
 >>> def underscore_reducer(k1, k2):
 ...     if k1 is None:
@@ -175,7 +175,7 @@ Unflatten
            The dict that will be unflattened.
        splitter : {'tuple', 'path', 'underscore', 'dot', Callable}
            The key splitting method. If a Callable is given, the Callable will be
-           used to split.
+           used to split `d`.
            'tuple': Use each element in the tuple key as the key of the unflattened dict.
            'path': Use `pathlib.Path.parts` to split keys.
            'underscore': Use underscores to split keys.
@@ -191,70 +191,67 @@ Unflatten
 Examples
 ::::::::
 
-.. code-block:: python
+>>> from pprint import pprint
+>>> from flatten_dict import unflatten
+>>> flat_dict = {
+...     ('a',): '0',
+...     ('b', 'a'): '1.0',
+...     ('b', 'b'): '1.1',
+...     ('c', 'a'): '2.0',
+...     ('c', 'b', 'a'): '2.1.0',
+...     ('c', 'b', 'b'): '2.1.1',
+... }
+>>> pprint(unflatten(flat_dict))
+{'a': '0',
+ 'b': {'a': '1.0', 'b': '1.1'},
+ 'c': {'a': '2.0', 'b': {'a': '2.1.0', 'b': '2.1.1'}}}
+>>> flat_dict = {
+...     'a': '0',
+...     'b/a': '1.0',
+...     'b/b': '1.1',
+...     'c/a': '2.0',
+...     'c/b/a': '2.1.0',
+...     'c/b/b': '2.1.1',
+... }
+>>> pprint(unflatten(flat_dict, splitter='path'))
+{'a': '0',
+ 'b': {'a': '1.0', 'b': '1.1'},
+ 'c': {'a': '2.0', 'b': {'a': '2.1.0', 'b': '2.1.1'}}}
+>>> flat_dict = {
+...     '0': 'a',
+...     '1.0': 'b/a',
+...     '1.1': 'b/b',
+...     '2.0': 'c/a',
+...     '2.1.0': 'c/b/a',
+...     '2.1.1': 'c/b/b',
+... }
+>>> pprint(unflatten(flat_dict, splitter='path', inverse=True))
+{'a': '0',
+ 'b': {'a': '1.0', 'b': '1.1'},
+ 'c': {'a': '2.0', 'b': {'a': '2.1.0', 'b': '2.1.1'}}}
 
-   In [1]: from flatten_dict import unflatten
+The `splitter` parameter supports ``'tuple'``, ``'path'``, ``'underscore'``, ``'dot'`` and `Callable`. We can customize the reducer using a function:
 
-   In [2]: flat_dict = {
-      ...:     ('a',): '0',
-      ...:     ('b', 'a'): '1.0',
-      ...:     ('b', 'b'): '1.1',
-      ...:     ('c', 'a'): '2.0',
-      ...:     ('c', 'b', 'a'): '2.1.0',
-      ...:     ('c', 'b', 'b'): '2.1.1',
-      ...: }
+>>> def underscore_splitter(flat_key):
+...     return flat_key.split("_")
+...
+>>> flat_dict = {
+...     'a': '0',
+...     'b_a': '1.0',
+...     'b_b': '1.1',
+...     'c_a': '2.0',
+...     'c_b_a': '2.1.0',
+...     'c_b_b': '2.1.1',
+... }
+>>> pprint(unflatten(flat_dict, splitter=underscore_splitter))
+{'a': '0',
+ 'b': {'a': '1.0', 'b': '1.1'},
+ 'c': {'a': '2.0', 'b': {'a': '2.1.0', 'b': '2.1.1'}}}
 
-   In [3]: unflatten(flat_dict)
-   Out[3]:
-   {'a': '0',
-    'b': {'a': '1.0', 'b': '1.1'},
-    'c': {'a': '2.0', 'b': {'a': '2.1.0', 'b': '2.1.1'}}}
+There is also a factory function `make_splitter()` to help you create customized splitter. The function currently only supports customized delimiter:
 
-   In [4]: flat_dict = {
-      ...:     'a': '0',
-      ...:     'b/a': '1.0',
-      ...:     'b/b': '1.1',
-      ...:     'c/a': '2.0',
-      ...:     'c/b/a': '2.1.0',
-      ...:     'c/b/b': '2.1.1',
-      ...: }
-
-   In [5]: unflatten(flat_dict, splitter='path')
-   Out[5]:
-   {'a': '0',
-    'b': {'a': '1.0', 'b': '1.1'},
-    'c': {'a': '2.0', 'b': {'a': '2.1.0', 'b': '2.1.1'}}}
-
-   In [6]: flat_dict = {
-      ...:     '0': 'a',
-      ...:     '1.0': 'b/a',
-      ...:     '1.1': 'b/b',
-      ...:     '2.0': 'c/a',
-      ...:     '2.1.0': 'c/b/a',
-      ...:     '2.1.1': 'c/b/b',
-      ...: }
-
-   In [7]: unflatten(flat_dict, splitter='path', inverse=True)
-   Out[7]:
-   {'a': '0',
-    'b': {'a': '1.0', 'b': '1.1'},
-    'c': {'a': '2.0', 'b': {'a': '2.1.0', 'b': '2.1.1'}}}
-
-   In [8]: def underscore_splitter(flat_key):
-      ...:     return flat_key.split("_")
-      ...:
-
-   In [9]: flat_dict = {
-      ...:     'a': '0',
-      ...:     'b_a': '1.0',
-      ...:     'b_b': '1.1',
-      ...:     'c_a': '2.0',
-      ...:     'c_b_a': '2.1.0',
-      ...:     'c_b_b': '2.1.1',
-      ...: }
-
-   In [10]: unflatten(flat_dict, splitter=underscore_splitter)
-   Out[10]:
-   {'a': '0',
-    'b': {'a': '1.0', 'b': '1.1'},
-    'c': {'a': '2.0', 'b': {'a': '2.1.0', 'b': '2.1.1'}}}
+>>> from flatten_dict.splitter import make_splitter
+>>> pprint(unflatten(flat_dict, splitter=make_splitter(delimiter='_')))
+{'a': '0',
+ 'b': {'a': '1.0', 'b': '1.1'},
+ 'c': {'a': '2.0', 'b': {'a': '2.1.0', 'b': '2.1.1'}}}
