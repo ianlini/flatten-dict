@@ -37,7 +37,7 @@ def make_reducer(delimiter):
 
     Returns
     -------
-    f : callable
+    f : Callable
         Callable that can be passed to `flatten()`'s `reducer` argument.
     """
 

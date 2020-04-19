@@ -31,12 +31,13 @@ def flatten(d, reducer='tuple', inverse=False, enumerate_types=(), keep_empty_ty
     ----------
     d : dict-like object
         The dict that will be flattened.
-    reducer : {'tuple', 'path', 'underscore', Callable}
+    reducer : {'tuple', 'path', 'underscore', 'dot', Callable}
         The key joining method. If a `Callable` is given, the `Callable` will be
         used to reduce.
         'tuple': The resulting key will be tuple of the original keys.
         'path': Use `os.path.join` to join keys.
         'underscore': Use underscores to join keys.
+        'dot': Use dots to join keys.
     inverse : bool
         Whether you want invert the resulting key and value.
     enumerate_types : Sequence[type]
@@ -118,12 +119,13 @@ def unflatten(d, splitter='tuple', inverse=False):
     ----------
     d : dict-like object
         The dict that will be unflattened.
-    splitter : {'tuple', 'path', 'underscore', Callable}
+    splitter : {'tuple', 'path', 'underscore', 'dot', Callable}
         The key splitting method. If a Callable is given, the Callable will be
-        used to split.
+        used to split `d`.
         'tuple': Use each element in the tuple key as the key of the unflattened dict.
         'path': Use `pathlib.Path.parts` to split keys.
-        'underscore': Use underscores to join keys.
+        'underscore': Use underscores to split keys.
+        'dot': Use underscores to split keys.
     inverse : bool
         Whether you want to invert the key and value before flattening.
 
