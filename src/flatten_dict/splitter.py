@@ -1,4 +1,8 @@
-from pathlib2 import PurePath
+import sys
+if sys.version_info >= (3,):
+    from pathlib import PurePath
+else:
+    from pathlib2 import PurePath
 
 
 def tuple_splitter(flat_key):
