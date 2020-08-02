@@ -207,9 +207,11 @@ def test_flatten_dict_with_list_irrelevant_depth_limit(dict_with_list, flat_tupl
 
 def test_flatten_dict_with_list_zero_depth_limit(dict_with_list):
     flattened = flatten(dict_with_list, max_depth=0)
-    values_before = sorted(flattened.values(), key=lambda x: json.dumps(x, sort_keys=True))
-    values_after = sorted(dict_with_list.values(), key=lambda x: json.dumps(x, sort_keys=True))
-    assert values_before == values_after
+    before = sorted(dict_with_list.items(), key=lambda x: x[0])
+    after = sorted(flattened.items(), key=lambda x: x[0])
+    # flatten with the default reducer transforms keys to tuples
+    after = [(x[0][0], x[1]) for x in after]
+    assert before == after
 
 
 @pytest.mark.parametrize(
