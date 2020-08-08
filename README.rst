@@ -49,6 +49,8 @@ Flatten
            'dot': Use dots to join keys.
        inverse : bool
            Whether you want invert the resulting key and value.
+       max_depth : int
+           Maximum depth to merge.
        enumerate_types : Sequence[type]
            Flatten these types using `enumerate`.
            For example, if we set `enumerate_types` to ``(list,)``,
@@ -108,6 +110,12 @@ Examples
  '2.0': 'c/a',
  '2.1.0': 'c/b/a',
  '2.1.1': 'c/b/b'}
+>>> pprint(flatten(normal_dict, reducer='path', max_depth=2))
+{'a': '0',
+ 'b/a': '1.0',
+ 'b/b': '1.1',
+ 'c/a': '2.0',
+ 'c/b': {'a': '2.1.0', 'b': '2.1.1'}}
 
 The `reducer` parameter supports ``'tuple'``, ``'path'``, ``'underscore'``, ``'dot'`` and `Callable`. We can customize the reducer using a function:
 
@@ -135,17 +143,6 @@ There is also a factory function `make_reducer()` to help you create customized 
  'c_a': '2.0',
  'c_b_a': '2.1.0',
  'c_b_b': '2.1.1'}
-
-   In [8]: flatten(normal_dict, reducer=underscore_reducer, max_depth=2)
-   Out[8]:
-   {'a': '0',
-    'b_a': '1.0',
-    'b_b': '1.1',
-    'c_a': '2.0',
-    'c_b': {
-      'a': '2.1.0',
-      'b': '2.1.1'},
-    }
 
 If we have some iterable (e.g., `list`) in the `dict`, we will normally get this:
 
