@@ -48,7 +48,7 @@ def flatten(
     inverse : bool
         Whether you want invert the resulting key and value.
     max_depth : int
-        Maximum depth when flattening
+        Maximum depth to merge.
     enumerate_types : Sequence[type]
         Flatten these types using `enumerate`.
         For example, if we set `enumerate_types` to ``(list,)``,
