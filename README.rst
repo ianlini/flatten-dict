@@ -136,6 +136,17 @@ There is also a factory function `make_reducer()` to help you create customized 
  'c_b_a': '2.1.0',
  'c_b_b': '2.1.1'}
 
+   In [8]: flatten(normal_dict, reducer=underscore_reducer, max_depth=2)
+   Out[8]:
+   {'a': '0',
+    'b_a': '1.0',
+    'b_b': '1.1',
+    'c_a': '2.0',
+    'c_b': {
+      'a': '2.1.0',
+      'b': '2.1.1'},
+    }
+
 If we have some iterable (e.g., `list`) in the `dict`, we will normally get this:
 
 >>> flatten({'a': [1, 2, 3], 'b': 'c'})

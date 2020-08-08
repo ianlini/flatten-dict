@@ -24,7 +24,14 @@ SPLITTER_DICT = {
 }
 
 
-def flatten(d, reducer='tuple', inverse=False, enumerate_types=(), keep_empty_types=()):
+def flatten(
+    d,
+    reducer='tuple',
+    inverse=False,
+    max_depth=None,
+    enumerate_types=(),
+    keep_empty_types=()
+):
     """Flatten `Mapping` object.
 
     Parameters
@@ -40,6 +47,8 @@ def flatten(d, reducer='tuple', inverse=False, enumerate_types=(), keep_empty_ty
         'dot': Use dots to join keys.
     inverse : bool
         Whether you want invert the resulting key and value.
+    max_depth : int
+        Maximum depth when flattening
     enumerate_types : Sequence[type]
         Flatten these types using `enumerate`.
         For example, if we set `enumerate_types` to ``(list,)``,
@@ -68,14 +77,16 @@ def flatten(d, reducer='tuple', inverse=False, enumerate_types=(), keep_empty_ty
         reducer = REDUCER_DICT[reducer]
     flat_dict = {}
 
-    def _flatten(d, parent=None):
-        key_value_iterable = enumerate(d) if isinstance(d, enumerate_types) else six.viewitems(d)
+    def _flatten(_d, depth, parent=None):
+        key_value_iterable = (
+            enumerate(_d) if isinstance(_d, enumerate_types) else six.viewitems(_d)
+        )
         for key, value in key_value_iterable:
             flat_key = reducer(parent, key)
-            if isinstance(value, flattenable_types):
+            if isinstance(value, flattenable_types) and (max_depth is None or depth < max_depth):
                 if value:
                     # recursively build the result
-                    _flatten(value, flat_key)
+                    _flatten(value, depth=depth + 1, parent=flat_key)
                     continue
                 elif not isinstance(value, keep_empty_types):
                     # ignore the key that has an empty value
@@ -88,7 +99,7 @@ def flatten(d, reducer='tuple', inverse=False, enumerate_types=(), keep_empty_ty
                 raise ValueError("duplicated key '{}'".format(flat_key))
             flat_dict[flat_key] = value
 
-    _flatten(d)
+    _flatten(d, depth=1)
     return flat_dict
 
 
