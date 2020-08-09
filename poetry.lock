@@ -298,6 +298,7 @@ six = "*"
 [[package]]
 category = "main"
 description = "Object-oriented filesystem paths"
+marker = "python_version < \"3.4\""
 name = "pathlib2"
 optional = false
 python-versions = "*"
@@ -462,7 +463,7 @@ docutils = ">=0.11,<1.0"
 [[package]]
 category = "main"
 description = "scandir, a better directory iterator and faster os.walk()"
-marker = "python_version < \"3.5\""
+marker = "python_version < \"3.4\""
 name = "scandir"
 optional = false
 python-versions = "*"
@@ -558,7 +559,7 @@ docs = ["proselint (>=0.10.2)", "sphinx (>=3)", "sphinx-argparse (>=0.2.5)", "sp
 testing = ["coverage (>=5)", "coverage-enable-subprocess (>=1)", "flaky (>=3)", "pytest (>=4)", "pytest-env (>=0.6.2)", "pytest-freezegun (>=0.4.1)", "pytest-mock (>=2)", "pytest-randomly (>=1)", "pytest-timeout (>=1)", "pytest-xdist (>=1.31.0)", "packaging (>=20.0)", "xonsh (>=0.9.16)"]
 
 [metadata]
-content-hash = "ccfcefc344d96bf489390b851a437eea1e8ea393d7bda693e4d9b7ff6d36dd4f"
+content-hash = "7f68f8b7f46427fcc2238dcbcf7de196af86a93cf44fde64311b1b4f6aa8d38a"
 lock-version = "1.0"
 python-versions = "~2.7 || ^3.5"
 
