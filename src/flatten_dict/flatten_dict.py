@@ -10,27 +10,27 @@ from .splitter import tuple_splitter, path_splitter, dot_splitter, underscore_sp
 
 
 REDUCER_DICT = {
-    'tuple': tuple_reducer,
-    'path': path_reducer,
-    'dot': dot_reducer,
-    'underscore': underscore_reducer,
+    "tuple": tuple_reducer,
+    "path": path_reducer,
+    "dot": dot_reducer,
+    "underscore": underscore_reducer,
 }
 
 SPLITTER_DICT = {
-    'tuple': tuple_splitter,
-    'path': path_splitter,
-    'dot': dot_splitter,
-    'underscore': underscore_splitter,
+    "tuple": tuple_splitter,
+    "path": path_splitter,
+    "dot": dot_splitter,
+    "underscore": underscore_splitter,
 }
 
 
 def flatten(
     d,
-    reducer='tuple',
+    reducer="tuple",
     inverse=False,
     max_depth=None,
     enumerate_types=(),
-    keep_empty_types=()
+    keep_empty_types=(),
 ):
     """Flatten `Mapping` object.
 
@@ -70,8 +70,10 @@ def flatten(
     enumerate_types = tuple(enumerate_types)
     flattenable_types = (Mapping,) + enumerate_types
     if not isinstance(d, flattenable_types):
-        raise ValueError("argument type %s is not in the flattenalbe types %s"
-                         % (type(d), flattenable_types))
+        raise ValueError(
+            "argument type %s is not in the flattenalbe types %s"
+            % (type(d), flattenable_types)
+        )
 
     if isinstance(reducer, str):
         reducer = REDUCER_DICT[reducer]
@@ -83,7 +85,9 @@ def flatten(
         )
         for key, value in key_value_iterable:
             flat_key = reducer(parent, key)
-            if isinstance(value, flattenable_types) and (max_depth is None or depth < max_depth):
+            if isinstance(value, flattenable_types) and (
+                max_depth is None or depth < max_depth
+            ):
                 if value:
                     # recursively build the result
                     _flatten(value, depth=depth + 1, parent=flat_key)
@@ -104,7 +108,7 @@ def flatten(
 
 
 def nested_set_dict(d, keys, value):
-    """Set a value to a sequence of nested keys
+    """Set a value to a sequence of nested keys.
 
     Parameters
     ----------
@@ -123,7 +127,7 @@ def nested_set_dict(d, keys, value):
     nested_set_dict(d, keys[1:], value)
 
 
-def unflatten(d, splitter='tuple', inverse=False):
+def unflatten(d, splitter="tuple", inverse=False):
     """Unflatten dict-like object.
 
     Parameters
