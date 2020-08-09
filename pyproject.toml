@@ -14,15 +14,42 @@ classifiers = [
 [tool.poetry.dependencies]
 python = "~2.7 || ^3.5"
 six = "^1.12"
-pathlib2 = "^2.3"
+pathlib2 = { version = "^2.3", python = "<3.4" }
 
 [tool.poetry.dev-dependencies]
-pytest = "^4.6"
-flake8 = "^3.7"
-tox = "^3.14"
-coverage = "^4.5"
-doc8 = "^0.8.0"
+pytest = { version = "^6.0", python = "^3.8" }
+flake8 = { version = "^3.8", python = "^3.8" }
+pep8-naming = { version = "^0.11.1", python = "^3.8"}
+flake8-import-order = { version = "^0.18.1", python = "^3.8"}
+flake8-bugbear = { version = "^20.1.4", python = "^3.8"}
+flake8-comprehensions = { version = "^3.2.3", python = "^3.8"}
+flake8-docstrings = { version = "^1.5.0", python = "^3.8"}
+flake8-logging-format = { version = "^0.6.0", python = "^3.8"}
+flake8-return = { version = "^1.1.2", python = "^3.8"}
+flake8-black = { version = "^0.2.1", python = "^3.8"}
+tox = { version = "^3.19", python = "^3.8" }
+coverage = { version = "^5.2", python = "^3.8" }
+doc8 = { version = "^0.8.1", python = "^3.8" }
+black = { version = "=19.10b0", python = "^3.8" }
 
+[tool.black]
+target-version = ['py38']
+exclude = '''
+/(
+    \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.nox
+  | \.tox
+  | \.venv
+  | \.svn
+  | _build
+  | buck-out
+  | build
+  | dist
+)/
+'''
 [build-system]
 requires = ["poetry>=1.0.0"]
 build-backend = "poetry.masonry.api"

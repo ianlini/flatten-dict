@@ -1,21 +1,18 @@
-import sys
-if sys.version_info >= (3,):
-    from pathlib import PurePath
-else:
-    from pathlib2 import PurePath
-
-
 def tuple_splitter(flat_key):
     return flat_key
 
 
 def path_splitter(flat_key):
+    try:
+        from pathlib import PurePath
+    except ImportError:
+        from pathlib2 import PurePath
     keys = PurePath(flat_key).parts
     return keys
 
 
 def dot_splitter(flat_key):
-    keys = tuple(flat_key.split('.'))
+    keys = tuple(flat_key.split("."))
     return keys
 
 
@@ -37,7 +34,9 @@ def make_splitter(delimiter):
     f : Callable
         Callable that can be passed to ``unflatten``'s ``splitter`` argument.
     """
+
     def f(flat_key):
         keys = tuple(flat_key.split(delimiter))
         return keys
+
     return f
