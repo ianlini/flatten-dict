@@ -6,7 +6,8 @@ import json
 import six
 import pytest
 
-from flatten_dict import flatten, unflatten
+from ..flatten_dict import *
+from ..flatten_dict import flatten, unflatten
 from flatten_dict.reducer import (
     tuple_reducer,
     path_reducer,
@@ -388,3 +389,32 @@ def test_make_splitter(normal_dict, delimiter, delimiter_equivalent):
         unflattened_dict_using_make_splitter
         == unflattened_dict_using_equivalent_splitter
     )
+
+
+def hook(value, key=None):
+    """
+    A sample hook function which can be used during flattening and unflattening.
+
+    This example is more trival for testing, but you can use this in cases where you might want
+    to do regex evaluation or substitution based on field values/flat key
+    """
+    return "We found {value} as the value for key {key}".format(
+        value=value,
+        key=key
+    )
+
+def test_unflatten_hook(flat_tuple_dict):
+    """
+    Tests that hooks (when provided) will modify the value while other work is being performed
+    """
+    first_key, first_value = tuple(flat_tuple_dict.items())[0]
+    unflattened_dict = unflatten(flat_tuple_dict, hook=hook)
+    assert unflattened_dict['a'] == hook(first_value, first_key)
+
+def test_flatten_hook(normal_dict):
+    """
+    Tests that hooks (when provided) will modify the value while other work is being performed
+    """
+    first_key, first_value = tuple(normal_dict.items())[0]
+    flattened_dict = flatten(normal_dict, reducer="dot", hook=hook)
+    assert flattened_dict[first_key] == hook(first_value, first_key)
