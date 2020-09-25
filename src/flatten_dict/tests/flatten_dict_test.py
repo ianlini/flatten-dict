@@ -6,7 +6,6 @@ import json
 import six
 import pytest
 
-from ..flatten_dict import *
 from ..flatten_dict import flatten, unflatten
 from flatten_dict.reducer import (
     tuple_reducer,
@@ -403,18 +402,22 @@ def hook(value, key=None):
         key=key
     )
 
+
 def test_unflatten_hook(flat_tuple_dict):
     """
     Tests that hooks (when provided) will modify the value while other work is being performed
     """
-    first_key, first_value = tuple(flat_tuple_dict.items())[0]
+    expected_key = ('a',)
+    expected_value = flat_tuple_dict[expected_key]
     unflattened_dict = unflatten(flat_tuple_dict, hook=hook)
-    assert unflattened_dict['a'] == hook(first_value, first_key)
+    assert unflattened_dict['a'] == hook(expected_value, expected_key)
+
 
 def test_flatten_hook(normal_dict):
     """
     Tests that hooks (when provided) will modify the value while other work is being performed
     """
-    first_key, first_value = tuple(normal_dict.items())[0]
+    expected_key = "a"
+    expected_value = normal_dict[expected_key]
     flattened_dict = flatten(normal_dict, reducer="dot", hook=hook)
-    assert flattened_dict[first_key] == hook(first_value, first_key)
+    assert flattened_dict[expected_key] == hook(expected_value, expected_key)

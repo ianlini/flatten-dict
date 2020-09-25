@@ -1,5 +1,3 @@
-import pkg_resources
-
 from .flatten_dict import flatten, unflatten  # noqa: F401
 
 

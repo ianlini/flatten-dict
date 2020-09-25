@@ -24,7 +24,7 @@ SPLITTER_DICT = {
 }
 
 
-def flatten(
+def flatten(  # noqa: C901
     d,
     reducer="tuple",
     inverse=False,
