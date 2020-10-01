@@ -174,7 +174,7 @@ We can keep the empty dict in the result using ``keep_empty_types=(dict,)``:
 We can also modify the value of each item in the dict as it is being processed with hooks using ``hook=(Callable)``:
 
 >>> def change_values(value, key):
-...     if key == ["super" "secret"]:
+...     if key == ["super", "secret"]:
 ...         value = "shhhh..."
 ...     return value
 >>> flatten({"super": {"secret": "dont tell"}}, reducer="dot", hook=change_values)
@@ -280,7 +280,7 @@ There is also a factory function `make_splitter()` to help you create customized
 We can also modify the value of each item in the dict as it is being processed with hooks using ``hook=(Callable)``:
 
 >>> def change_values(value, key):
-...     if key == ["super" "secret"]:
+...     if key == ["super", "secret"]:
 ...         value = "shhhh..."
 ...     return value
 >>> unflatten({"super.secret": "dont tell"}, splitter="dot", hook=change_values)
