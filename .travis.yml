@@ -1,3 +1,5 @@
+dist: focal
+
 notifications:
   email:
     on_success: change
@@ -12,7 +14,8 @@ matrix:
     - python: '3.6'
     - python: '3.7'
     - python: '3.8'
-    - python: '3.7'
+    - python: '3.9-dev'
+    - python: '3.8'
       env: TOXENV=flake8
 
 install:
