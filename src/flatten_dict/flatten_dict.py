@@ -28,7 +28,7 @@ def flatten(
     d,
     reducer="tuple",
     inverse=False,
-    max_depth=None,
+    max_flatten_depth=None,
     enumerate_types=(),
     keep_empty_types=(),
 ):
@@ -47,7 +47,7 @@ def flatten(
         'dot': Use dots to join keys.
     inverse : bool
         Whether you want invert the resulting key and value.
-    max_depth : int
+    max_flatten_depth : int
         Maximum depth to merge.
     enumerate_types : Sequence[type]
         Flatten these types using `enumerate`.
@@ -75,6 +75,10 @@ def flatten(
             % (type(d), flattenable_types)
         )
 
+    # check max_flatten_depth
+    if max_flatten_depth is not None and max_flatten_depth < 1:
+        raise ValueError("max_flatten_depth should not be less than 1.")
+
     if isinstance(reducer, str):
         reducer = REDUCER_DICT[reducer]
     flat_dict = {}
@@ -86,7 +90,7 @@ def flatten(
         for key, value in key_value_iterable:
             flat_key = reducer(parent, key)
             if isinstance(value, flattenable_types) and (
-                max_depth is None or depth < max_depth
+                max_flatten_depth is None or depth < max_flatten_depth
             ):
                 if value:
                     # recursively build the result

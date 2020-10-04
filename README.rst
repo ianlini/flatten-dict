@@ -49,7 +49,7 @@ Flatten
            'dot': Use dots to join keys.
        inverse : bool
            Whether you want invert the resulting key and value.
-       max_depth : int
+       max_flatten_depth : int
            Maximum depth to merge.
        enumerate_types : Sequence[type]
            Flatten these types using `enumerate`.
@@ -110,7 +110,7 @@ Examples
  '2.0': 'c/a',
  '2.1.0': 'c/b/a',
  '2.1.1': 'c/b/b'}
->>> pprint(flatten(normal_dict, reducer='path', max_depth=2))
+>>> pprint(flatten(normal_dict, reducer='path', max_flatten_depth=2))
 {'a': '0',
  'b/a': '1.0',
  'b/b': '1.1',
