@@ -47,7 +47,7 @@ def flatten(
         'dot': Use dots to join keys.
     inverse : bool
         Whether you want invert the resulting key and value.
-    max_flatten_depth : int
+    max_flatten_depth : Optional[int]
         Maximum depth to merge.
     enumerate_types : Sequence[type]
         Flatten these types using `enumerate`.
