@@ -85,6 +85,11 @@ def test_flatten_dict(normal_dict, flat_tuple_dict):
     assert flatten(normal_dict) == flat_tuple_dict
 
 
+def test_flatten_dict_invalid_depth_limit(normal_dict):
+    with pytest.raises(ValueError):
+        flatten(normal_dict, max_flatten_depth=0)
+
+
 def test_flatten_dict_depth_limit_1(normal_dict):
     flattened = flatten(normal_dict, max_flatten_depth=1)
     values_before = sorted(
