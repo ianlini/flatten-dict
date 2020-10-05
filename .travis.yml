@@ -19,10 +19,9 @@ matrix:
       env: TOXENV=flake8
 
 install:
-  - pip install poetry==1.1.0
   - pip install -U pip wheel
   - pip install -U Cython
-  - pip install -U tox-travis tox
+  - pip install -U tox-travis tox poetry==1.1.0
 
 script:
   - tox
