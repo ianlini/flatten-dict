@@ -64,6 +64,8 @@ Flatten
 
            >>> flatten({1: 2, 3: {}}, keep_empty_types=(dict,))
            {(1,): 2, (3,): {}}
+       hook : Callable
+           Method that will modify the value of each dict item as it is processed
 
        Returns
        -------
@@ -169,6 +171,15 @@ We can keep the empty dict in the result using ``keep_empty_types=(dict,)``:
 >>> flatten({1: 2, 3: {}}, keep_empty_types=(dict,))
 {(1,): 2, (3,): {}}
 
+We can also modify the value of each item in the dict as it is being processed with hooks using ``hook=(Callable)``:
+
+>>> def change_values(value, key):
+...     if key == ["super", "secret"]:
+...         value = "shhhh..."
+...     return value
+>>> flatten({"super": {"secret": "dont tell"}}, reducer="dot", hook=change_values)
+{"super.secret": "shhhh..."}
+
 Unflatten
 `````````
 
@@ -190,6 +201,8 @@ Unflatten
            'dot': Use underscores to split keys.
        inverse : bool
            Whether you want to invert the key and value before flattening.
+       hook : Callable
+           Method that will modify the value of each dict item as it is processed
 
        Returns
        -------
@@ -263,3 +276,12 @@ There is also a factory function `make_splitter()` to help you create customized
 {'a': '0',
  'b': {'a': '1.0', 'b': '1.1'},
  'c': {'a': '2.0', 'b': {'a': '2.1.0', 'b': '2.1.1'}}}
+
+We can also modify the value of each item in the dict as it is being processed with hooks using ``hook=(Callable)``:
+
+>>> def change_values(value, key):
+...     if key == ["super", "secret"]:
+...         value = "shhhh..."
+...     return value
+>>> unflatten({"super.secret": "dont tell"}, splitter="dot", hook=change_values)
+{"super": {"secret": "shhhh..."}}

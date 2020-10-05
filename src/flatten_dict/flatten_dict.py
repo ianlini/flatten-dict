@@ -24,13 +24,14 @@ SPLITTER_DICT = {
 }
 
 
-def flatten(
+def flatten(  # noqa: C901
     d,
     reducer="tuple",
     inverse=False,
     max_flatten_depth=None,
     enumerate_types=(),
     keep_empty_types=(),
+    hook=None,
 ):
     """Flatten `Mapping` object.
 
@@ -62,6 +63,8 @@ def flatten(
 
         >>> flatten({1: 2, 3: {}}, keep_empty_types=(dict,))
         {(1,): 2, (3,): {}}
+    hook : Callable
+        Method that will modify the value of each dict item as it is processed
 
     Returns
     -------
@@ -71,7 +74,7 @@ def flatten(
     flattenable_types = (Mapping,) + enumerate_types
     if not isinstance(d, flattenable_types):
         raise ValueError(
-            "argument type %s is not in the flattenalbe types %s"
+            "argument type %s is not in the flattenable types %s"
             % (type(d), flattenable_types)
         )
 
@@ -105,6 +108,8 @@ def flatten(
                 flat_key, value = value, flat_key
             if flat_key in flat_dict:
                 raise ValueError("duplicated key '{}'".format(flat_key))
+            if hook:
+                value = hook(value, flat_key)
             flat_dict[flat_key] = value
 
     _flatten(d, depth=1)
@@ -131,7 +136,7 @@ def nested_set_dict(d, keys, value):
     nested_set_dict(d, keys[1:], value)
 
 
-def unflatten(d, splitter="tuple", inverse=False):
+def unflatten(d, splitter="tuple", inverse=False, hook=None):
     """Unflatten dict-like object.
 
     Parameters
@@ -147,6 +152,8 @@ def unflatten(d, splitter="tuple", inverse=False):
         'dot': Use underscores to split keys.
     inverse : bool
         Whether you want to invert the key and value before flattening.
+    hook : Callable
+        Method that will modify the value of each dict item as it is processed
 
     Returns
     -------
@@ -160,6 +167,8 @@ def unflatten(d, splitter="tuple", inverse=False):
         if inverse:
             flat_key, value = value, flat_key
         key_tuple = splitter(flat_key)
+        if hook:
+            value = hook(value, key_tuple)
         nested_set_dict(unflattened_dict, key_tuple, value)
 
     return unflattened_dict
