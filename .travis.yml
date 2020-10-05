@@ -9,17 +9,17 @@ sudo: false
 language: python
 matrix:
   include:
-    - python: '2.7'
-    - python: '3.5'
-    - python: '3.6'
-    - python: '3.7'
-    - python: '3.8'
-    - python: '3.9-dev'
-    - python: '3.8'
+    - python: "2.7"
+    - python: "3.5"
+    - python: "3.6"
+    - python: "3.7"
+    - python: "3.8"
+    - python: "3.9-dev"
+    - python: "3.8"
       env: TOXENV=flake8
 
 install:
-  - curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | POETRY_VERSION=1.1.0 python -
+  - pip install poetry==1.1.0
   - pip install -U pip wheel
   - pip install -U Cython
   - pip install -U tox-travis tox
