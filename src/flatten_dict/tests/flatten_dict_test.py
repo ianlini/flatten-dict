@@ -7,13 +7,13 @@ import six
 import pytest
 
 from flatten_dict import flatten, unflatten
-from flatten_dict.reducer import (
+from flatten_dict.reducers import (
     tuple_reducer,
     path_reducer,
     underscore_reducer,
     make_reducer,
 )
-from flatten_dict.splitter import (
+from flatten_dict.splitters import (
     tuple_splitter,
     path_splitter,
     underscore_splitter,
