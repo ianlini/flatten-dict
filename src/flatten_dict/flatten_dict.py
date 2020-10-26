@@ -5,6 +5,7 @@ except ImportError:
 
 import six
 
+from .key_types import ListIndex
 from .reducers import tuple_reducer, path_reducer, dot_reducer, underscore_reducer
 from .splitters import tuple_splitter, path_splitter, dot_splitter, underscore_splitter
 
@@ -111,7 +112,7 @@ def flatten(
     return flat_dict
 
 
-def nested_set_dict(d, keys, value):
+def nested_set_dict(d, keys, value, list_index_types, level=0):
     """Set a value to a sequence of nested keys.
 
     Parameters
@@ -119,19 +120,28 @@ def nested_set_dict(d, keys, value):
     d : Mapping
     keys : Sequence[str]
     value : Any
+    list_index_types : Sequence[type]
+        Types that will be converted to int and used as list index to build a list.
     """
-    assert keys
-    key = keys[0]
-    if len(keys) == 1:
+    assert len(keys) > level
+    key = keys[level]
+
+    if len(keys) == level + 1:
+        # set the value for the last level
         if key in d:
-            raise ValueError("duplicated key '{}'".format(key))
+            raise ValueError("duplicated key '{}'".format(keys))
         d[key] = value
         return
-    d = d.setdefault(key, {})
-    nested_set_dict(d, keys[1:], value)
+
+    if key not in d:
+        next_level_d = {}
+        d[key] = next_level_d
+    else:
+        next_level_d = d[key]
+    nested_set_dict(next_level_d, keys, value, list_index_types, level + 1)
 
 
-def unflatten(d, splitter="tuple", inverse=False):
+def unflatten(d, splitter="tuple", inverse=False, list_index_types=(ListIndex,)):
     """Unflatten dict-like object.
 
     Parameters
@@ -147,6 +157,8 @@ def unflatten(d, splitter="tuple", inverse=False):
         'dot': Use underscores to split keys.
     inverse : bool
         Whether you want to invert the key and value before flattening.
+    list_index_types : Sequence[type]
+        Types that will be converted to int and used as list index to build a list.
 
     Returns
     -------
@@ -154,12 +166,13 @@ def unflatten(d, splitter="tuple", inverse=False):
     """
     if isinstance(splitter, str):
         splitter = SPLITTER_DICT[splitter]
+    list_index_types = tuple(list_index_types)
 
     unflattened_dict = {}
     for flat_key, value in six.viewitems(d):
         if inverse:
             flat_key, value = value, flat_key
         key_tuple = splitter(flat_key)
-        nested_set_dict(unflattened_dict, key_tuple, value)
+        nested_set_dict(unflattened_dict, key_tuple, value, list_index_types)
 
     return unflattened_dict
