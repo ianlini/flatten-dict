@@ -125,6 +125,8 @@ def nested_set_dict(d, keys, value, list_index_types, level=0):
     """
     assert len(keys) > level
     key = keys[level]
+    if isinstance(key, list_index_types):
+        key = int(key)
 
     if len(keys) == level + 1:
         # set the value for the last level
@@ -133,12 +135,26 @@ def nested_set_dict(d, keys, value, list_index_types, level=0):
         d[key] = value
         return
 
+    # set and check the inner object
+    inner_key = keys[level + 1]
     if key not in d:
-        next_level_d = {}
-        d[key] = next_level_d
+        if isinstance(inner_key, list_index_types):
+            inner_d = []
+        else:
+            inner_d = {}
+        d[key] = inner_d
     else:
-        next_level_d = d[key]
-    nested_set_dict(next_level_d, keys, value, list_index_types, level + 1)
+        inner_d = d[key]
+        if isinstance(inner_key, list_index_types):
+            if not isinstance(inner_d, list):
+                raise ValueError(
+                    "Type is not consistant for key '{}'".format(keys[: level + 1])
+                )
+        elif not isinstance(inner_d, dict):
+            raise ValueError(
+                "Type is not consistant for key '{}'".format(keys[: level + 1])
+            )
+    nested_set_dict(inner_d, keys, value, list_index_types, level + 1)
 
 
 def unflatten(d, splitter="tuple", inverse=False, list_index_types=(ListIndex,)):
