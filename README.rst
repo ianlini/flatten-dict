@@ -135,7 +135,7 @@ The `reducer` parameter supports ``'tuple'``, ``'path'``, ``'underscore'``, ``'d
 
 There is also a factory function `make_reducer()` to help you create customized reducer. The function currently only supports customized delimiter:
 
->>> from flatten_dict.reducer import make_reducer
+>>> from flatten_dict.reducers import make_reducer
 >>> pprint(flatten(normal_dict, reducer=make_reducer(delimiter='_')))
 {'a': '0',
  'b_a': '1.0',
@@ -258,7 +258,7 @@ The `splitter` parameter supports ``'tuple'``, ``'path'``, ``'underscore'``, ``'
 
 There is also a factory function `make_splitter()` to help you create customized splitter. The function currently only supports customized delimiter:
 
->>> from flatten_dict.splitter import make_splitter
+>>> from flatten_dict.splitters import make_splitter
 >>> pprint(unflatten(flat_dict, splitter=make_splitter(delimiter='_')))
 {'a': '0',
  'b': {'a': '1.0', 'b': '1.1'},
