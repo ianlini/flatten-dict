@@ -112,7 +112,7 @@ def flatten(
     return flat_dict
 
 
-def nested_set_dict(d, keys, value, list_index_types, level=0):
+def nested_set_dict(d, keys, value, level=0):
     """Set a value to a sequence of nested keys.
 
     Parameters
@@ -120,13 +120,9 @@ def nested_set_dict(d, keys, value, list_index_types, level=0):
     d : Mapping
     keys : Sequence[str]
     value : Any
-    list_index_types : Sequence[type]
-        Types that will be converted to int and used as list index to build a list.
     """
     assert len(keys) > level
     key = keys[level]
-    if isinstance(key, list_index_types):
-        key = int(key)
 
     if len(keys) == level + 1:
         # set the value for the last level
@@ -135,29 +131,35 @@ def nested_set_dict(d, keys, value, list_index_types, level=0):
         d[key] = value
         return
 
-    # set and check the inner object
-    inner_key = keys[level + 1]
-    if key not in d:
-        if isinstance(inner_key, list_index_types):
-            inner_d = []
-        else:
-            inner_d = {}
-        d[key] = inner_d
-    else:
+    if key in d:
         inner_d = d[key]
-        if isinstance(inner_key, list_index_types):
-            if not isinstance(inner_d, list):
-                raise ValueError(
-                    "Type is not consistant for key '{}'".format(keys[: level + 1])
-                )
-        elif not isinstance(inner_d, dict):
-            raise ValueError(
-                "Type is not consistant for key '{}'".format(keys[: level + 1])
-            )
-    nested_set_dict(inner_d, keys, value, list_index_types, level + 1)
+    else:
+        inner_d = {}
+        d[key] = inner_d
+
+    nested_set_dict(inner_d, keys, value, level + 1)
 
 
-def unflatten(d, splitter="tuple", inverse=False, list_index_types=(ListIndex,)):
+def nested_convert_to_list(d, list_index_types, list_fill_value):
+    """Convert the dicts that can be converted to list recursively.
+
+    Parameters
+    ----------
+    d : Dict
+    list_index_types : Sequence[type]
+        Types that will be converted to int and used as list index to build a list.
+    list_fill_value: Any
+        The value to fill when the bubble indices have bubble.
+    """
+
+
+def unflatten(
+    d,
+    splitter="tuple",
+    inverse=False,
+    list_index_types=(ListIndex,),
+    list_fill_value=None,
+):
     """Unflatten dict-like object.
 
     Parameters
@@ -175,6 +177,11 @@ def unflatten(d, splitter="tuple", inverse=False, list_index_types=(ListIndex,))
         Whether you want to invert the key and value before flattening.
     list_index_types : Sequence[type]
         Types that will be converted to int and used as list index to build a list.
+    list_fill_value: Any
+        The value to fill when the bubble indices have bubble.
+        For example:
+        >>> unflatten({"0": 1, "2", 3}, list_index_types=(str,), list_fill_value=5)
+        [1, 5, 3]
 
     Returns
     -------
@@ -189,6 +196,8 @@ def unflatten(d, splitter="tuple", inverse=False, list_index_types=(ListIndex,))
         if inverse:
             flat_key, value = value, flat_key
         key_tuple = splitter(flat_key)
-        nested_set_dict(unflattened_dict, key_tuple, value, list_index_types)
+        nested_set_dict(unflattened_dict, key_tuple, value)
+
+    nested_convert_to_list(unflattened_dict, list_index_types, list_fill_value)
 
     return unflattened_dict
