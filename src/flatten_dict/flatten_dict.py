@@ -1,3 +1,5 @@
+import itertools
+
 try:
     from collections.abc import Mapping
 except ImportError:
@@ -158,11 +160,10 @@ def nested_convert_to_list(
         The value to fill when the bubble indices have bubble.
     """
     checked = {}
-    # TODO: convert the root dict?
     for key_tuple in key_tuples:
         current_checked = checked
         current_d = unflattened_dict
-        for key in key_tuple:
+        for key in itertools.islice(key_tuple, 0, len(key_tuple) - 1):
             if key in current_checked:
                 current_checked, current_d = current_checked[key]
                 continue
@@ -173,6 +174,7 @@ def nested_convert_to_list(
             current_checked[key] = (next_checked, next_d)
             current_checked = next_checked
             current_d = next_d
+    # TODO: convert the root dict
 
 
 def unflatten(
