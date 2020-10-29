@@ -140,17 +140,39 @@ def nested_set_dict(d, keys, value, level=0):
     nested_set_dict(inner_d, keys, value, level + 1)
 
 
-def nested_convert_to_list(d, list_index_types, list_fill_value):
-    """Convert the dicts that can be converted to list recursively.
+def nested_convert_to_list(
+    unflattened_dict, key_tuples, list_index_types, list_fill_value
+):
+    """Convert the dicts that can be converted to list.
 
     Parameters
     ----------
-    d : Dict
+    unflattened_dict : Dict
+        The dict that will be modified in this function.
+    key_tuples : List[Tuple]
+        We need the original keys here because we only want to check the dicts that are
+        unflattened by us.
     list_index_types : Sequence[type]
         Types that will be converted to int and used as list index to build a list.
     list_fill_value: Any
         The value to fill when the bubble indices have bubble.
     """
+    checked = {}
+    # TODO: convert the root dict?
+    for key_tuple in key_tuples:
+        current_checked = checked
+        current_d = unflattened_dict
+        for key in key_tuple:
+            if key in current_checked:
+                current_checked, current_d = current_checked[key]
+                continue
+            next_d = current_d[key]
+            # TODO: convert next_d and assign back to current_d[key]
+            # if all(isinstance(key, list_index_types) for key in six.viewkeys(next_d)):
+            next_checked = {}
+            current_checked[key] = (next_checked, next_d)
+            current_checked = next_checked
+            current_d = next_d
 
 
 def unflatten(
@@ -192,12 +214,16 @@ def unflatten(
     list_index_types = tuple(list_index_types)
 
     unflattened_dict = {}
+    key_tuples = []
     for flat_key, value in six.viewitems(d):
         if inverse:
             flat_key, value = value, flat_key
         key_tuple = splitter(flat_key)
+        key_tuples.append(key_tuple)
         nested_set_dict(unflattened_dict, key_tuple, value)
 
-    nested_convert_to_list(unflattened_dict, list_index_types, list_fill_value)
+    nested_convert_to_list(
+        unflattened_dict, key_tuples, list_index_types, list_fill_value
+    )
 
     return unflattened_dict
