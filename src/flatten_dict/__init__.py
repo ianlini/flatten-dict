@@ -4,11 +4,10 @@ from .flatten_dict import flatten, unflatten  # noqa: F401
 __all__ = ["flatten", "unflatten", "splitter"]
 
 try:
-    from importlib.metadata import distribution
+    # for Python >= 3.8
+    from importlib.metadata import version
 except ImportError:
-    try:
-        from importlib_metadata import distribution
-    except ImportError:
-        from pkg_resources import get_distribution as distribution
+    # for Python < 3.8, the package importlib-metadata will be installed
+    from importlib_metadata import version
 
-__version__ = distribution("flatten-dict").version
+__version__ = version("flatten-dict")
