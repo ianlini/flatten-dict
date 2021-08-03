@@ -10,11 +10,11 @@ jobs:
   ci:
     strategy:
       matrix:
+        python: [2.7, 3.6, 3.7, 3.8, 3.9, 3.10]
+        toxenv: [py]
         include:
-        - python: [2.7, 3.6, 3.7, 3.8, 3.9, 3.10]
-          toxenv: py
-        - python: 3.9
-          toxenv: flake8
+          - python: 3.9
+            toxenv: flake8
     runs-on: ubuntu-20.04
     steps:
     - uses: actions/checkout@v2
