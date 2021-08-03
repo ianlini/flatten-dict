@@ -1,7 +1,7 @@
 flatten-dict
 ============
-.. image:: https://travis-ci.com/ianlini/flatten-dict.svg?branch=master
-   :target: https://travis-ci.com/ianlini/flatten-dict
+.. image:: https://github.com/ianlini/flatten-dict/actions/workflows/ci.yml/badge.svg
+   :target: https://github.com/ianlini/flatten-dict/actions
 .. image:: https://img.shields.io/pypi/v/flatten-dict.svg
    :target: https://pypi.org/project/flatten-dict/
 .. image:: https://img.shields.io/pypi/l/flatten-dict.svg
