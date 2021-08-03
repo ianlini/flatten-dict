@@ -1,0 +1,26 @@
+name: ci
+
+on:
+  push:
+    branches: [master]
+    tags:
+  pull_request:
+
+jobs:
+  ci:
+    strategy:
+      matrix:
+        include:
+        - python: [2.7, 3.6, 3.7, 3.8, 3.9, 3.10]
+          toxenv: py
+        - python: 3.9
+          toxenv: flake8
+    runs-on: ubuntu-20.04
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python }}
+    - run: python -m pip install --upgrade pip wheel setuptools
+    - run: python -m pip install --upgrade tox poetry
+    - run: tox -e ${{ matrix.toxenv }}
