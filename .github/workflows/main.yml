@@ -1,4 +1,4 @@
-name: ci
+name: CI
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
   pull_request:
 
 jobs:
-  ci:
+  test:
     strategy:
       fail-fast: false
       matrix:
@@ -25,3 +25,10 @@ jobs:
     - run: python -m pip install --upgrade pip wheel setuptools
     - run: python -m pip install --upgrade tox poetry
     - run: tox -e ${{ matrix.toxenv }}
+  all-tests-succeeded:
+    # https://github.community/t/is-it-possible-to-require-all-github-actions-tasks-to-pass-without-enumerating-them/117957/4?u=graingert
+    runs-on: ubuntu-20.04
+    needs: [test]
+    steps:
+    - name: All tests succeeded
+      run: echo "🎉"
