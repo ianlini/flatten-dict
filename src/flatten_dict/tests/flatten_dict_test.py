@@ -2,6 +2,7 @@ from __future__ import absolute_import
 
 import os.path
 import json
+from types import GeneratorType
 
 import six
 import pytest
@@ -23,7 +24,6 @@ from flatten_dict.splitters import (
 
 @pytest.fixture
 def normal_dict():
-    # fmt: off
     return {
         "a": "0",
         "b": {
@@ -38,7 +38,6 @@ def normal_dict():
             },
         },
     }
-    # fmt: on
 
 
 @pytest.fixture
@@ -179,7 +178,6 @@ def test_unflatten_dict_inverse_with_duplicated_value(
 
 @pytest.fixture
 def dict_with_list():
-    # fmt: off
     return {
         "a": "0",
         "b": {
@@ -191,10 +189,10 @@ def dict_with_list():
             "b": {
                 "a": "2.1.0",
                 "b": ["2.1.1.0", "2.1.1.1"],
+                "c": [],
             },
         },
     }
-    # fmt: on
 
 
 @pytest.fixture
@@ -206,12 +204,12 @@ def flat_tuple_dict_with_list():
         ("c", "a"): "2.0",
         ("c", "b", "a"): "2.1.0",
         ("c", "b", "b"): ["2.1.1.0", "2.1.1.1"],
+        ("c", "b", "c"): [],
     }
 
 
 @pytest.fixture
 def flat_tuple_dict_with_list_depth2():
-    # fmt: off
     return {
         ("a",): "0",
         ("b", "a"): "1.0",
@@ -220,9 +218,9 @@ def flat_tuple_dict_with_list_depth2():
         ("c", "b"): {
             "a": "2.1.0",
             "b": ["2.1.1.0", "2.1.1.1"],
+            "c": [],
         },
     }
-    # fmt: on
 
 
 def test_flatten_dict_with_list(dict_with_list, flat_tuple_dict_with_list):
@@ -319,24 +317,50 @@ def test_flatten_list():
 
 
 @pytest.fixture
-def dict_with_empty_dict():
-    # fmt: off
+def dict_with_generator():
     return {
-        'a': '0',
-        'b': {
-            'a': '1.0',
-            'b': '1.1',
+        "a": "0",
+        "b": {
+            "a": "1.0",
+            "b": "1.1",
         },
-        'c': {
-            'a': '2.0',
-            'b': {
-                'a': '2.1.0',
-                'b': '2.1.1',
-                'c': {},
+        "c": {
+            "a": "2.0",
+            "b": {
+                "a": "2.1.0",
+                "b": ("2.1.1.%d" % i for i in range(2)),
+                "c": (i for i in ()),  # empty generator
             },
         },
     }
-    # fmt: on
+
+
+def test_flatten_dict_with_generator_with_enumerate_types(
+    dict_with_generator, flat_tuple_dict_with_enumerated_list
+):
+    assert (
+        flatten(dict_with_generator, enumerate_types=(GeneratorType,))
+        == flat_tuple_dict_with_enumerated_list
+    )
+
+
+@pytest.fixture
+def dict_with_empty_dict():
+    return {
+        "a": "0",
+        "b": {
+            "a": "1.0",
+            "b": "1.1",
+        },
+        "c": {
+            "a": "2.0",
+            "b": {
+                "a": "2.1.0",
+                "b": "2.1.1",
+                "c": {},
+            },
+        },
+    }
 
 
 @pytest.fixture
