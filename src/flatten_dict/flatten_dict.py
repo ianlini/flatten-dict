@@ -87,17 +87,18 @@ def flatten(
         key_value_iterable = (
             enumerate(_d) if isinstance(_d, enumerate_types) else six.viewitems(_d)
         )
+        has_item = False
         for key, value in key_value_iterable:
+            has_item = True
             flat_key = reducer(parent, key)
             if isinstance(value, flattenable_types) and (
                 max_flatten_depth is None or depth < max_flatten_depth
             ):
-                if value:
-                    # recursively build the result
-                    _flatten(value, depth=depth + 1, parent=flat_key)
-                    continue
-                elif not isinstance(value, keep_empty_types):
-                    # ignore the key that has an empty value
+                # recursively build the result
+                has_child = _flatten(value, depth=depth + 1, parent=flat_key)
+                if has_child or not isinstance(value, keep_empty_types):
+                    # ignore the key in this level because it already has child key
+                    # or its value is empty
                     continue
 
             # add an item to the result
@@ -106,6 +107,8 @@ def flatten(
             if flat_key in flat_dict:
                 raise ValueError("duplicated key '{}'".format(flat_key))
             flat_dict[flat_key] = value
+
+        return has_item
 
     _flatten(d, depth=1)
     return flat_dict
