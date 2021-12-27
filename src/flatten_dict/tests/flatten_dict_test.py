@@ -316,6 +316,53 @@ def test_flatten_list():
     assert flatten([1, 2], enumerate_types=(list,)) == {(0,): 1, (1,): 2}
 
 
+def test_flatten_dict_with_list_of_str_with_keep_element_types():
+    assert (
+        flatten(
+            {"a": ["b", "c"]},
+            enumerate_types=(list,),
+            keep_element_types=(str,),
+        )
+        == {("a",): ["b", "c"]}
+    )
+
+
+def test_flatten_dict_with_list_of_int_with_keep_element_types():
+    assert (
+        flatten(
+            {"a": [10, 11]},
+            enumerate_types=(list,),
+            keep_element_types=(str,),
+        )
+        == {("a", 0): 10, ("a", 1): 11}
+    )
+
+
+def test_flatten_dict_with_list_of_dict_with_keep_element_types():
+    assert (
+        flatten(
+            {"a": [{"b": "foo"}]},
+            enumerate_types=(list,),
+            keep_element_types=(str,),
+        )
+        == {("a", 0, "b"): "foo"}
+    )
+
+
+def test_flatten_dict_with_list_with_keep_empty_types_and_keep_element_types(
+    dict_with_list, flat_tuple_dict_with_list
+):
+    assert (
+        flatten(
+            dict_with_list,
+            enumerate_types=(list,),
+            keep_empty_types=(list,),
+            keep_element_types=(str,),
+        )
+        == flat_tuple_dict_with_list
+    )
+
+
 @pytest.fixture
 def dict_with_generator():
     return {
