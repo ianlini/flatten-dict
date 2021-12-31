@@ -1,3 +1,5 @@
+import inspect
+
 try:
     from collections.abc import Mapping
 except ImportError:
@@ -81,6 +83,12 @@ def flatten(
 
     if isinstance(reducer, str):
         reducer = REDUCER_DICT[reducer]
+    try:
+        # Python 3
+        reducer_accepts_parent_obj = len(inspect.signature(reducer).parameters) == 3
+    except AttributeError:
+        # Python 2
+        reducer_accepts_parent_obj = len(inspect.getargspec(reducer)[0]) == 3
     flat_dict = {}
 
     def _flatten(_d, depth, parent=None):
@@ -90,7 +98,10 @@ def flatten(
         has_item = False
         for key, value in key_value_iterable:
             has_item = True
-            flat_key = reducer(parent, key)
+            if reducer_accepts_parent_obj:
+                flat_key = reducer(parent, key, _d)
+            else:
+                flat_key = reducer(parent, key)
             if isinstance(value, flattenable_types) and (
                 max_flatten_depth is None or depth < max_flatten_depth
             ):

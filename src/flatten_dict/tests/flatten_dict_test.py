@@ -63,6 +63,44 @@ def flat_tuple_dict_depth2():
     }
 
 
+@pytest.fixture
+def normal_dict_with_nested_lists():
+    return {
+        "aaa": "0",
+        "bbb": ["1.1", "1.2", "1.3"],
+        "ccc": [{"aaa": "2.1.1"}, {"aaa": "2.2.1"}],
+        "ddd": [["3.1.1", "3.1.2", "3.1.3"], ["3.2.1", "3.2.2", "3.2.3"]],
+        "eee": [
+            {"aaa": ["4.1.1", "4.1.2", "4.1.3"]},
+            {"bbb": ["4.2.1", "4.2.2", "4.2.3"]},
+        ],
+    }
+
+
+@pytest.fixture
+def flat_dict_with_nested_lists_with_list_syntax():
+    return {
+        "aaa": "0",
+        "bbb[0]": "1.1",
+        "bbb[1]": "1.2",
+        "bbb[2]": "1.3",
+        "ccc[0].aaa": "2.1.1",
+        "ccc[1].aaa": "2.2.1",
+        "ddd[0][0]": "3.1.1",
+        "ddd[0][1]": "3.1.2",
+        "ddd[0][2]": "3.1.3",
+        "ddd[1][0]": "3.2.1",
+        "ddd[1][1]": "3.2.2",
+        "ddd[1][2]": "3.2.3",
+        "eee[0].aaa[0]": "4.1.1",
+        "eee[0].aaa[1]": "4.1.2",
+        "eee[0].aaa[2]": "4.1.3",
+        "eee[1].bbb[0]": "4.2.1",
+        "eee[1].bbb[1]": "4.2.2",
+        "eee[1].bbb[2]": "4.2.3",
+    }
+
+
 def get_flat_tuple_dict(flat_tuple_dict):
     return flat_tuple_dict
 
@@ -140,6 +178,25 @@ def test_flatten_dict_inverse_with_duplicated_value(normal_dict):
     dup_val_dict["a"] = "2.1.1"
     with pytest.raises(ValueError):
         flatten(dup_val_dict, inverse=True)
+
+
+def test_flatten_dict_with_list_syntax(
+    normal_dict_with_nested_lists, flat_dict_with_nested_lists_with_list_syntax
+):
+    def _reducer(parent_path, key, parent_obj):
+        if parent_path is None:
+            return key
+        elif isinstance(parent_obj, list):
+            return "{}[{}]".format(parent_path, key)
+        else:
+            return "{}.{}".format(parent_path, key)
+
+    assert (
+        flatten(
+            normal_dict_with_nested_lists, reducer=_reducer, enumerate_types=(list,)
+        )
+        == flat_dict_with_nested_lists_with_list_syntax
+    )
 
 
 def test_unflatten_dict(normal_dict, flat_tuple_dict):
