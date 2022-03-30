@@ -187,7 +187,7 @@ Unflatten
            'tuple': Use each element in the tuple key as the key of the unflattened dict.
            'path': Use `pathlib.Path.parts` to split keys.
            'underscore': Use underscores to split keys.
-           'dot': Use underscores to split keys.
+           'dot': Use dots to split keys.
        inverse : bool
            Whether you want to invert the key and value before flattening.
 
