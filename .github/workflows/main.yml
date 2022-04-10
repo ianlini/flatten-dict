@@ -16,6 +16,8 @@ jobs:
         include:
           - python: "3.10"
             toxenv: flake8
+          - python: "3.10"
+            toxenv: py27type
     runs-on: ubuntu-20.04
     steps:
     - uses: actions/checkout@v2
@@ -25,6 +27,7 @@ jobs:
     - run: python -m pip install --upgrade pip wheel setuptools
     - run: python -m pip install --upgrade tox poetry
     - run: tox -e ${{ matrix.toxenv }}
+    - run: tox -e ${{ matrix.toxenv }}-type
   all-tests-succeeded:
     # https://github.community/t/is-it-possible-to-require-all-github-actions-tasks-to-pass-without-enumerating-them/117957/4?u=graingert
     runs-on: ubuntu-20.04
