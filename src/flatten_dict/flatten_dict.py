@@ -1,8 +1,28 @@
 import inspect
+import sys
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    Hashable,
+    Optional,
+    Sequence,
+    Union,
+    Tuple,
+    TypeVar,
+    overload,
+)
 
-try:
+if sys.version_info >= (3,) and sys.version_info < (3, 8):
+    from typing_extensions import Literal
+else:
+    from typing import Literal
+
+if sys.version_info >= (3, 3):
+    # Python >= 3.3
     from collections.abc import Mapping
-except ImportError:
+else:
+    # Python 2, < 3.3
     from collections import Mapping
 
 import six
@@ -10,20 +30,78 @@ import six
 from .reducers import tuple_reducer, path_reducer, dot_reducer, underscore_reducer
 from .splitters import tuple_splitter, path_splitter, dot_splitter, underscore_splitter
 
+TKey = TypeVar("TKey", bound=Hashable)
+TKey2 = TypeVar("TKey2", bound=Hashable)
+ReducerCallable = Callable[[Optional[Union[TKey, TKey2]], TKey], TKey2]
+SplitterCallable = Union[
+    Callable[[Tuple[TKey, ...]], Tuple[TKey, ...]], Callable[[TKey], Tuple[TKey2, ...]]
+]
 
 REDUCER_DICT = {
     "tuple": tuple_reducer,
     "path": path_reducer,
     "dot": dot_reducer,
     "underscore": underscore_reducer,
-}
+}  # type: Dict[str, ReducerCallable]
 
 SPLITTER_DICT = {
     "tuple": tuple_splitter,
     "path": path_splitter,
     "dot": dot_splitter,
     "underscore": underscore_splitter,
-}
+}  # type: Dict[str, SplitterCallable]
+
+
+@overload
+def flatten(
+    d,  # type: Mapping[TKey, Any]
+    reducer,  # type: Callable[[Optional[Union[TKey, TKey2]], TKey], TKey2]
+    inverse=False,  # type: bool
+    max_flatten_depth=None,  # type: Optional[int]
+    enumerate_types=(),  # type: Sequence[type]
+    keep_empty_types=(),  # type: Sequence[type]
+):
+    # type: (...) ->  Dict[TKey2, Any]
+    pass
+
+
+@overload
+def flatten(
+    d,  # type: Mapping[TKey, Any]
+    reducer="tuple",  # type: Literal["tuple"]
+    inverse=False,  # type: bool
+    max_flatten_depth=None,  # type: Optional[int]
+    enumerate_types=(),  # type: Sequence[type]
+    keep_empty_types=(),  # type: Sequence[type]
+):
+    # type: (...) -> Dict[Tuple[Any, ...], Any]
+    pass
+
+
+@overload
+def flatten(
+    d,  # type: Mapping[TKey, Any]
+    reducer,  # type: Literal["dot", "path", "underscore"]
+    inverse=False,  # type: bool
+    max_flatten_depth=None,  # type: Optional[int]
+    enumerate_types=(),  # type: Sequence[type]
+    keep_empty_types=(),  # type: Sequence[type]
+):
+    # type: (...) -> Dict[Union[TKey, str], Any]
+    pass
+
+
+@overload
+def flatten(
+    d,  # type: Mapping[TKey, Any]
+    reducer="tuple",  # type: str
+    inverse=False,  # type: bool
+    max_flatten_depth=None,  # type: Optional[int]
+    enumerate_types=(),  # type: Sequence[type]
+    keep_empty_types=(),  # type: Sequence[type]
+):
+    # type: (...) -> Union[Dict[Tuple[Any, ...], Any], Dict[Union[TKey, str], Any]]
+    pass
 
 
 def flatten(
@@ -83,10 +161,10 @@ def flatten(
 
     if isinstance(reducer, str):
         reducer = REDUCER_DICT[reducer]
-    try:
+    if sys.version_info[0] >= 3:
         # Python 3
         reducer_accepts_parent_obj = len(inspect.signature(reducer).parameters) == 3
-    except AttributeError:
+    else:
         # Python 2
         reducer_accepts_parent_obj = len(inspect.getargspec(reducer)[0]) == 3
     flat_dict = {}
@@ -143,6 +221,46 @@ def nested_set_dict(d, keys, value):
         return
     d = d.setdefault(key, {})
     nested_set_dict(d, keys[1:], value)
+
+
+@overload
+def unflatten(
+    d,  # type: Mapping[str, Any]
+    splitter,  # type: Literal["dot", "underscore", "path"]
+    inverse=False,  # type: bool
+):
+    # type: (...) -> Mapping[str, Any]
+    pass
+
+
+@overload
+def unflatten(
+    d,  # type: Mapping[Tuple[TKey, ...], Any]
+    splitter="tuple",  # type: Literal["tuple"]
+    inverse=False,  # type: bool
+):
+    # type: (...) -> Mapping[TKey, Any]
+    pass
+
+
+@overload
+def unflatten(
+    d,  # type: Union[Mapping[str, Any], Mapping[Tuple[TKey, ...], Any]]
+    splitter="tuple",  # type: str
+    inverse=False,  # type: bool
+):
+    # type: (...) -> Union[Mapping[str, Any], Mapping[TKey, Any]]
+    pass
+
+
+@overload
+def unflatten(
+    d,  # type: Mapping[TKey, Any]
+    splitter,  # type: Callable[[TKey], Tuple[TKey2, ...]]
+    inverse=False,  # type: bool
+):
+    # type: (...) -> Mapping[TKey2, Any]
+    pass
 
 
 def unflatten(d, splitter="tuple", inverse=False):

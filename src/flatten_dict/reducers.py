@@ -1,4 +1,10 @@
+from typing import Any, Callable, Tuple, TypeVar, Optional, Union
+
+T = TypeVar("T")
+
+
 def tuple_reducer(k1, k2):
+    # type: (Optional[Tuple[T,...]], T) -> Tuple[T,...]
     if k1 is None:
         return (k2,)
     else:
@@ -6,6 +12,7 @@ def tuple_reducer(k1, k2):
 
 
 def path_reducer(k1, k2):
+    # type: (Optional[str], str) -> str
     import os.path
 
     if k1 is None:
@@ -15,6 +22,7 @@ def path_reducer(k1, k2):
 
 
 def dot_reducer(k1, k2):
+    # type: (Optional[Union[T, str]], T) -> Union[T, str]
     if k1 is None:
         return k2
     else:
@@ -22,6 +30,7 @@ def dot_reducer(k1, k2):
 
 
 def underscore_reducer(k1, k2):
+    # type: (Optional[Union[T, str]], T) -> Union[T, str]
     if k1 is None:
         return k2
     else:
@@ -29,6 +38,7 @@ def underscore_reducer(k1, k2):
 
 
 def make_reducer(delimiter):
+    # type: (Any) -> Callable[[Optional[Union[T, str]], T], Union[T, str]]
     """Create a reducer with a custom delimiter.
 
     Parameters
@@ -43,6 +53,7 @@ def make_reducer(delimiter):
     """
 
     def f(k1, k2):
+        # type: (Optional[Union[T, str]], T) -> Union[T, str]
         if k1 is None:
             return k2
         else:
