@@ -12,7 +12,7 @@ jobs:
       fail-fast: false
       matrix:
         python: ["2.7", "3.6", "3.7", "3.8", "3.9", "3.10"]
-        toxenv: [py]
+        toxenv: [py, py-type]
         include:
           - python: "3.10"
             toxenv: flake8
@@ -27,7 +27,6 @@ jobs:
     - run: python -m pip install --upgrade pip wheel setuptools
     - run: python -m pip install --upgrade tox poetry
     - run: tox -e ${{ matrix.toxenv }}
-    - run: tox -e ${{ matrix.toxenv }}-type
   all-tests-succeeded:
     # https://github.community/t/is-it-possible-to-require-all-github-actions-tasks-to-pass-without-enumerating-them/117957/4?u=graingert
     runs-on: ubuntu-20.04
