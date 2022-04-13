@@ -11,9 +11,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python: ["2.7", "3.6", "3.7", "3.8", "3.9", "3.10"]
+        python: ["3.6", "3.7", "3.8", "3.9", "3.10"]
         toxenv: [py, py-type]
         include:
+          - python: "2.7"
+            toxenv: py
           - python: "3.10"
             toxenv: flake8
           - python: "3.10"
