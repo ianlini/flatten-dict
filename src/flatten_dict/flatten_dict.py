@@ -1,5 +1,6 @@
 import inspect
 import sys
+from collections.abc import Mapping
 from typing import (
     Any,
     Callable,
@@ -12,18 +13,13 @@ from typing import (
     TypeVar,
     overload,
 )
+import typing
 
-if sys.version_info >= (3,) and sys.version_info < (3, 8):
+if sys.version_info < (3, 8):
     from typing_extensions import Literal
 else:
     from typing import Literal
 
-if sys.version_info >= (3, 3):
-    # Python >= 3.3
-    from collections.abc import Mapping
-else:
-    # Python 2, < 3.3
-    from collections import Mapping
 
 import six
 
@@ -37,70 +33,66 @@ SplitterCallable = Union[
     Callable[[Tuple[TKey, ...]], Tuple[TKey, ...]], Callable[[TKey], Tuple[TKey2, ...]]
 ]
 
-REDUCER_DICT = {
+REDUCER_DICT: Dict[str, ReducerCallable] = {
     "tuple": tuple_reducer,
     "path": path_reducer,
     "dot": dot_reducer,
     "underscore": underscore_reducer,
-}  # type: Dict[str, ReducerCallable]
+}
 
-SPLITTER_DICT = {
+SPLITTER_DICT: Dict[str, SplitterCallable] = {
     "tuple": tuple_splitter,
     "path": path_splitter,
     "dot": dot_splitter,
     "underscore": underscore_splitter,
-}  # type: Dict[str, SplitterCallable]
+}
 
 
 @overload
 def flatten(
-    d,  # type: Mapping[TKey, Any]
-    reducer,  # type: Callable[[Optional[Union[TKey, TKey2]], TKey], TKey2]
-    inverse=False,  # type: bool
-    max_flatten_depth=None,  # type: Optional[int]
-    enumerate_types=(),  # type: Sequence[type]
-    keep_empty_types=(),  # type: Sequence[type]
-):
-    # type: (...) ->  Dict[TKey2, Any]
+    d: typing.Mapping[TKey, Any],
+    reducer: Callable[[Optional[Union[TKey, TKey2]], TKey], TKey2],
+    inverse: bool = False,
+    max_flatten_depth: Optional[int] = None,
+    enumerate_types: Sequence[type] = (),
+    keep_empty_types: Sequence[type] = (),
+) -> Dict[TKey2, Any]:
     pass
 
 
 @overload
 def flatten(
-    d,  # type: Mapping[TKey, Any]
-    reducer="tuple",  # type: Literal["tuple"]
-    inverse=False,  # type: bool
-    max_flatten_depth=None,  # type: Optional[int]
-    enumerate_types=(),  # type: Sequence[type]
-    keep_empty_types=(),  # type: Sequence[type]
-):
-    # type: (...) -> Dict[Tuple[Any, ...], Any]
+    d: typing.Mapping[TKey, Any],
+    reducer: Literal["tuple"] = "tuple",
+    inverse: bool = False,
+    max_flatten_depth: Optional[int] = None,
+    enumerate_types: Sequence[type] = (),
+    keep_empty_types: Sequence[type] = (),
+) -> Dict[Tuple[Any, ...], Any]:
     pass
 
 
 @overload
 def flatten(
-    d,  # type: Mapping[TKey, Any]
-    reducer,  # type: Literal["dot", "path", "underscore"]
-    inverse=False,  # type: bool
-    max_flatten_depth=None,  # type: Optional[int]
-    enumerate_types=(),  # type: Sequence[type]
-    keep_empty_types=(),  # type: Sequence[type]
-):
-    # type: (...) -> Dict[Union[TKey, str], Any]
+    d: typing.Mapping[TKey, Any],
+    reducer: Literal["dot", "path", "underscore"],
+    inverse: bool = False,
+    max_flatten_depth: Optional[int] = None,
+    enumerate_types: Sequence[type] = (),
+    keep_empty_types: Sequence[type] = (),
+) -> Dict[Union[TKey, str], Any]:
     pass
 
 
 @overload
 def flatten(
-    d,  # type: Mapping[TKey, Any]
-    reducer="tuple",  # type: str
-    inverse=False,  # type: bool
-    max_flatten_depth=None,  # type: Optional[int]
-    enumerate_types=(),  # type: Sequence[type]
-    keep_empty_types=(),  # type: Sequence[type]
-):
-    # type: (...) -> Union[Dict[Tuple[Any, ...], Any], Dict[Union[TKey, str], Any]]
+    d: typing.Mapping[TKey, Any],
+    reducer: str = "tuple",
+    inverse: bool = False,
+    max_flatten_depth: Optional[int] = None,
+    enumerate_types: Sequence[type] = (),
+    keep_empty_types: Sequence[type] = (),
+) -> Union[Dict[Tuple[Any, ...], Any], Dict[Union[TKey, str], Any]]:
     pass
 
 
@@ -161,12 +153,8 @@ def flatten(
 
     if isinstance(reducer, str):
         reducer = REDUCER_DICT[reducer]
-    if sys.version_info[0] >= 3:
-        # Python 3
-        reducer_accepts_parent_obj = len(inspect.signature(reducer).parameters) == 3
-    else:
-        # Python 2
-        reducer_accepts_parent_obj = len(inspect.getargspec(reducer)[0]) == 3
+
+    reducer_accepts_parent_obj = len(inspect.signature(reducer).parameters) == 3
     flat_dict = {}
 
     def _flatten(_d, depth, parent=None):
@@ -225,41 +213,37 @@ def nested_set_dict(d, keys, value):
 
 @overload
 def unflatten(
-    d,  # type: Mapping[str, Any]
-    splitter,  # type: Literal["dot", "underscore", "path"]
-    inverse=False,  # type: bool
-):
-    # type: (...) -> Mapping[str, Any]
+    d: typing.Mapping[str, Any],
+    splitter: Literal["dot", "underscore", "path"],
+    inverse: bool = False,
+) -> typing.Mapping[str, Any]:
     pass
 
 
 @overload
 def unflatten(
-    d,  # type: Mapping[Tuple[TKey, ...], Any]
-    splitter="tuple",  # type: Literal["tuple"]
-    inverse=False,  # type: bool
-):
-    # type: (...) -> Mapping[TKey, Any]
+    d: typing.Mapping[Tuple[TKey, ...], Any],
+    splitter: Literal["tuple"] = "tuple",
+    inverse: bool = False,
+) -> typing.Mapping[TKey, Any]:
     pass
 
 
 @overload
 def unflatten(
-    d,  # type: Union[Mapping[str, Any], Mapping[Tuple[TKey, ...], Any]]
-    splitter="tuple",  # type: str
-    inverse=False,  # type: bool
-):
-    # type: (...) -> Union[Mapping[str, Any], Mapping[TKey, Any]]
+    d: Union[typing.Mapping[str, Any], typing.Mapping[Tuple[TKey, ...], Any]],
+    splitter: str = "tuple",
+    inverse: bool = False,
+) -> Union[typing.Mapping[str, Any], typing.Mapping[TKey, Any]]:
     pass
 
 
 @overload
 def unflatten(
-    d,  # type: Mapping[TKey, Any]
-    splitter,  # type: Callable[[TKey], Tuple[TKey2, ...]]
-    inverse=False,  # type: bool
-):
-    # type: (...) -> Mapping[TKey2, Any]
+    d: typing.Mapping[TKey, Any],
+    splitter: Callable[[TKey], Tuple[TKey2, ...]],
+    inverse: bool = False,
+) -> typing.Mapping[TKey2, Any]:
     pass
 
 

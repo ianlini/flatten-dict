@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "flatten-dict"
-version = "0.4.3"
+version = "0.5.3"
 description = "A flexible utility for flattening and unflattening dict-like objects in Python."
 authors = ["Ian Lin <you@example.com>"]
 license = "MIT"
@@ -12,15 +12,14 @@ classifiers = [
 ]
 
 [tool.poetry.dependencies]
-python = "~2.7 || ^3.5"
+python = "^3.5"
 six = "^1.12"
-pathlib2 = { version = "^2.3", python = "<3.4" }
 importlib-metadata = {version = "*", python = "<3.8"}
 
 [tool.poetry.dev-dependencies]
 pytest = { version = "^6.0", python = "^3.8" }
 flake8 = { version = "^4.0", python = "^3.8" }
-mypy = { version = "^0.942", python = "^3.8", extras=["python2"]}
+mypy = { version = "^0.942", python = "^3.8" }
 pep8-naming = { version = "^0.12.0", python = "^3.8"}
 flake8-import-order = { version = "^0.18.1", python = "^3.8"}
 flake8-bugbear = { version = "^21.4.0", python = "^3.8"}
