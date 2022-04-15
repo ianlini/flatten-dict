@@ -10,23 +10,27 @@ def tuple_reducer(k1: Optional[Tuple[T, ...]], k2: T) -> Tuple[T, ...]:
         return k1 + (k2,)
 
 
-def path_reducer(k1: Optional[str], k2: str) -> str:
+def path_reducer(k1: Optional[str], k2: Union[str, int]) -> str:
     import os.path
 
     if k1 is None:
-        return k2
+        return str(k2)
     else:
-        return os.path.join(k1, k2)
+        return os.path.join(k1, str(k2))
 
 
-def dot_reducer(k1: Optional[Union[T, str]], k2: T) -> Union[T, str]:
+def dot_reducer(
+    k1: Optional[Union[T, str, int]], k2: Union[T, int]
+) -> Union[T, str, int]:
     if k1 is None:
         return k2
     else:
         return "{}.{}".format(k1, k2)
 
 
-def underscore_reducer(k1: Optional[Union[T, str]], k2: T) -> Union[T, str]:
+def underscore_reducer(
+    k1: Optional[Union[T, str, int]], k2: Union[T, int]
+) -> Union[T, str, int]:
     if k1 is None:
         return k2
     else:
@@ -35,7 +39,7 @@ def underscore_reducer(k1: Optional[Union[T, str]], k2: T) -> Union[T, str]:
 
 def make_reducer(
     delimiter: str,
-) -> Callable[[Optional[Union[T, str]], T], Union[T, str]]:
+) -> Callable[[Union[T, str, int, None], Union[T, str, int]], Union[T, str, int]]:
     """Create a reducer with a custom delimiter.
 
     Parameters
@@ -49,7 +53,9 @@ def make_reducer(
         Callable that can be passed to `flatten()`'s `reducer` argument.
     """
 
-    def f(k1: Optional[Union[T, str]], k2: T) -> Union[T, str]:
+    def f(
+        k1: Optional[Union[T, str, int]], k2: Union[T, str, int]
+    ) -> Union[T, str, int]:
         if k1 is None:
             return k2
         else:

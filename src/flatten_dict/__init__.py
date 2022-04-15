@@ -1,9 +1,20 @@
 import sys
 
-from .flatten_dict import flatten, unflatten  # noqa: F401
+from .flatten_dict import (
+    flatten,
+    unflatten,
+    TReducerCallable,
+    TSplitterCallable,
+)  # noqa: F401
 
 
-__all__ = ["flatten", "unflatten", "splitter"]
+__all__ = [
+    "flatten",
+    "unflatten",
+    "splitter",
+    "TReducerCallable",
+    "TSplitterCallable",
+]
 
 if sys.version_info >= (3, 8):
     # for Python >= 3.8
