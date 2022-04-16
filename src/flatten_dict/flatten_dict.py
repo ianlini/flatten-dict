@@ -28,9 +28,9 @@ import six
 from .reducers import tuple_reducer, path_reducer, dot_reducer, underscore_reducer
 from .splitters import tuple_splitter, path_splitter, dot_splitter, underscore_splitter
 
-TKeyIn = TypeVar("TKeyIn", bound=Hashable, contravariant=True)
+TKeyIn = TypeVar("TKeyIn", bound=Hashable)
 TKeyIn2 = TypeVar("TKeyIn2", bound=Hashable)
-TKeyOut = TypeVar("TKeyOut", bound=Hashable, covariant=True)
+TKeyOut = TypeVar("TKeyOut", bound=Hashable)
 
 TReducerCallable2Args = Callable[
     [Optional[Union[TKeyIn, TKeyOut]], Union[TKeyIn, int]], TKeyOut
