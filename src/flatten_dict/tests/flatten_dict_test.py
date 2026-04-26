@@ -1,10 +1,7 @@
-from __future__ import absolute_import
-
 import os.path
 import json
 from types import GeneratorType
 
-import six
 import pytest
 
 from flatten_dict import flatten, unflatten
@@ -106,16 +103,16 @@ def get_flat_tuple_dict(flat_tuple_dict):
 
 
 def get_flat_path_dict(flat_tuple_dict):
-    return {os.path.join(*k): v for k, v in six.viewitems(flat_tuple_dict)}
+    return {os.path.join(*k): v for k, v in flat_tuple_dict.items()}
 
 
 def get_flat_underscore_dict(flat_tuple_dict):
-    return {"_".join(k): v for k, v in six.viewitems(flat_tuple_dict)}
+    return {"_".join(k): v for k, v in flat_tuple_dict.items()}
 
 
 @pytest.fixture
 def inv_flat_tuple_dict(flat_tuple_dict):
-    return {v: k for k, v in six.viewitems(flat_tuple_dict)}
+    return {v: k for k, v in flat_tuple_dict.items()}
 
 
 def test_flatten_dict(normal_dict, flat_tuple_dict):

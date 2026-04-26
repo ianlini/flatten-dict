@@ -3,10 +3,7 @@ def tuple_splitter(flat_key):
 
 
 def path_splitter(flat_key):
-    try:
-        from pathlib import PurePath
-    except ImportError:
-        from pathlib2 import PurePath
+    from pathlib import PurePath
     keys = PurePath(flat_key).parts
     return keys
 
