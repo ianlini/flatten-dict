@@ -32,7 +32,7 @@ def make_reducer(delimiter):
     delimiter : str
         Delimiter to use to join keys.
 
-    Returns:
+    Returns
     -------
     f : Callable
         Callable that can be passed to `flatten()`'s `reducer` argument.

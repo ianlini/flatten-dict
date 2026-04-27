@@ -126,4 +126,4 @@ max-complexity = 15
 max-line-length = 99
 
 [tool.ruff.lint.pydocstyle]
-convention = "google"
+convention = "numpy"
