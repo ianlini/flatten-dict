@@ -14,15 +14,6 @@ classifiers = [
 [tool.poetry.dependencies]
 python = "^3.10"
 
-[tool.poetry.dev-dependencies]
-pytest = { version = "^6.0", python = "^3.8" }
-tox = { version = "^3.19", python = "^3.8" }
-coverage = { version = "^6.0", python = "^3.8" }
-black = { version = "= 21.9b0", python = "^3.8" }
-rstcheck = { version = "^3.3.1", python = "^3.8" }
-docutils = { version = "^0.17", python = "^3.8" }
-ipython = { version = "^7.26.0", python = "^3.8" }
-
 [tool.black]
 target-version = ['py310']
 exclude = '''
@@ -47,7 +38,14 @@ build-backend = "poetry.core.masonry.api"
 
 [dependency-groups]
 dev = [
-    "ruff (>=0.15.12,<0.16.0)"
+    "ruff (>=0.15.12,<0.16.0)",
+    "pytest (>=6.0,<7.0)",
+    "tox (>=3.19,<4.0)",
+    "coverage (>=6.0,<7.0)",
+    "black (>=22,<23)",
+    "docutils (>=0.19,<0.20)",
+    "rstcheck (>=3.3,<4.0)",
+    "ipython (>=7.26,<8.0)"
 ]
 
 [tool.ruff]
