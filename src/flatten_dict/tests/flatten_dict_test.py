@@ -1,21 +1,21 @@
-import os.path
 import json
+import os.path
 from types import GeneratorType
 
 import pytest
 
 from flatten_dict import flatten, unflatten
 from flatten_dict.reducers import (
-    tuple_reducer,
-    path_reducer,
-    underscore_reducer,
     make_reducer,
+    path_reducer,
+    tuple_reducer,
+    underscore_reducer,
 )
 from flatten_dict.splitters import (
-    tuple_splitter,
-    path_splitter,
-    underscore_splitter,
     make_splitter,
+    path_splitter,
+    tuple_splitter,
+    underscore_splitter,
 )
 
 
@@ -183,10 +183,9 @@ def test_flatten_dict_with_list_syntax(
     def _reducer(parent_path, key, parent_obj):
         if parent_path is None:
             return key
-        elif isinstance(parent_obj, list):
+        if isinstance(parent_obj, list):
             return "{}[{}]".format(parent_path, key)
-        else:
-            return "{}.{}".format(parent_path, key)
+        return "{}.{}".format(parent_path, key)
 
     assert (
         flatten(

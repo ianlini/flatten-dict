@@ -26,7 +26,7 @@ def make_splitter(delimiter):
     delimiter : str
         Delimiter to use to split keys.
 
-    Returns
+    Returns:
     -------
     f : Callable
         Callable that can be passed to ``unflatten``'s ``splitter`` argument.

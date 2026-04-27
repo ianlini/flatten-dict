@@ -1,9 +1,8 @@
 import inspect
 from collections.abc import Mapping
 
-from .reducers import tuple_reducer, path_reducer, dot_reducer, underscore_reducer
-from .splitters import tuple_splitter, path_splitter, dot_splitter, underscore_splitter
-
+from .reducers import dot_reducer, path_reducer, tuple_reducer, underscore_reducer
+from .splitters import dot_splitter, path_splitter, tuple_splitter, underscore_splitter
 
 REDUCER_DICT = {
     "tuple": tuple_reducer,
@@ -59,7 +58,7 @@ def flatten(
         >>> flatten({1: 2, 3: {}}, keep_empty_types=(dict,))
         {(1,): 2, (3,): {}}
 
-    Returns
+    Returns:
     -------
     flat_dict : dict
     """
@@ -151,7 +150,7 @@ def unflatten(d, splitter="tuple", inverse=False):
     inverse : bool
         Whether you want to invert the key and value before flattening.
 
-    Returns
+    Returns:
     -------
     unflattened_dict : dict
     """

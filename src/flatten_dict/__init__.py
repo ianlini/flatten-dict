@@ -1,5 +1,6 @@
-from .flatten_dict import flatten, unflatten  # noqa: F401
 from importlib.metadata import version
+
+from .flatten_dict import flatten, unflatten  # noqa: F401
 
 __all__ = ["flatten", "unflatten", "splitter"]
 
