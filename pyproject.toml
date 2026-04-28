@@ -39,13 +39,13 @@ build-backend = "poetry.core.masonry.api"
 [dependency-groups]
 dev = [
     "ruff (>=0.15.12,<0.16.0)",
-    "pytest (>=6.0,<7.0)",
-    "tox (>=3.19,<4.0)",
-    "coverage (>=6.0,<7.0)",
-    "black (>=22,<23)",
-    "docutils (>=0.19,<0.20)",
-    "rstcheck (>=3.3,<4.0)",
-    "ipython (>=7.26,<8.0)"
+    "pytest (>=9.0,<10.0)",
+    "tox (>=4.53,<5.0)",
+    "coverage (>=7.0,<8.0)",
+    "black (>=26,<27)",
+    "docutils (>=0.22,<0.23)",
+    "rstcheck (>=6.2,<7.0)",
+    "ipython (>=8.0,<9.0)"
 ]
 
 [tool.ruff]
