@@ -14,7 +14,7 @@ A flexible utility for flattening and unflattening dict-like objects in Python.
 
 Introduction
 ------------
-This package provides a function ``flatten()`` for flattening dict-like objects in Python 2.7 and 3.5~3.8.
+This package provides a function ``flatten()`` for flattening dict-like objects in Python (tested with 3.10-3.15).
 It also provides some key joining methods (reducer), and you can choose the reducer you want or even implement your own reducer.
 You can also invert the resulting flat dict using ``unflatten()``.
 
