@@ -1,0 +1,41 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - "master"
+  release:
+    types: [published]
+  workflow_dispatch:
+
+
+jobs:
+  release:
+    env:
+      POETRY_VERSION: "2.3.4"
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v3
+      - name: Python package version (tag)
+        if: github.ref_type == 'tag'
+        run: echo 'PYTHON_PACKAGE_VERSION=${{ github.ref_name }}' >> ${GITHUB_ENV}
+      - name: Python package version (branch)
+        if: github.ref_type != 'tag'
+        run: echo 'PYTHON_PACKAGE_VERSION=0.0.0.dev' >> ${GITHUB_ENV}
+      - uses: actions/setup-python@v4
+        with:
+          python-version: 3.14
+      - name: Poetry env
+        run: echo "POETRY_HOME=${{ runner.temp }}/.poetry" >> ${GITHUB_ENV}
+      - name: Poetry path
+        run: echo "${POETRY_HOME}/bin" >> ${GITHUB_PATH}
+      - name: Install Poetry
+        run: |
+          set -x \
+          && python -m venv "${POETRY_HOME}" \
+          && "${POETRY_HOME}/bin/pip" install -U pip wheel setuptools \
+          && "${POETRY_HOME}/bin/pip" install "poetry==${POETRY_VERSION}"
+      - run: poetry version "${PYTHON_PACKAGE_VERSION}"
+      - name: Build and publish the PyPI package
+        if: github.ref_type == 'tag'
+        run: POETRY_PYPI_TOKEN_PYPI='${{ secrets.PYPI_TOKEN }}' poetry publish --build
