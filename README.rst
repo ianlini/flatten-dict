@@ -174,7 +174,7 @@ Unflatten
 
 .. code-block:: python
 
-   def unflatten(d, splitter='tuple', inverse=False):
+   def unflatten(d, splitter='tuple', inverse=False, allow_non_leaf_values=False):
        """Unflatten dict-like object.
 
        Parameters
@@ -190,6 +190,12 @@ Unflatten
            'dot': Use dots to split keys.
        inverse : bool
            Whether you want to invert the key and value before flattening.
+       allow_non_leaf_values : bool
+           Whether a key may be nested inside the value of a shorter key, e.g.
+           ``unflatten({('a',): {'existing': 0}, ('a', 'b'): 2})``. If False (the
+           default), that raises ``ValueError``. If True, the deeper key is set on
+           the shorter key's value, which mutates that value in place, so `d` and
+           the returned dict share it.
 
        Returns
        -------
