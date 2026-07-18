@@ -369,6 +369,15 @@ def test_flatten_list():
     assert flatten([1, 2], enumerate_types=(list,)) == {(0,): 1, (1,): 2}
 
 
+def test_flatten_with_path_reducer_and_enumerate_types():
+    assert flatten({"a": ["b", "c"]}, reducer="path", enumerate_types=(list,)) == {
+        "a/0": "b",
+        "a/1": "c",
+    }
+    assert path_reducer(None, 0) == "0"
+    assert path_reducer("a", 0) == os.path.join("a", "0")
+
+
 @pytest.fixture
 def dict_with_generator():
     return {
