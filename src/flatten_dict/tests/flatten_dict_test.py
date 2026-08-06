@@ -229,6 +229,55 @@ def test_unflatten_dict_inverse_with_duplicated_value(
         unflatten(inv_flat_tuple_dict, inverse=True)
 
 
+def test_unflatten_dict_non_leaf_value_raises_by_default():
+    # A deeper key extending a key that already holds a value must raise
+    # instead of nesting into that value.
+    for leaf in ({"existing": 0}, 1, [1]):
+        with pytest.raises(ValueError):
+            unflatten({("a",): leaf, ("a", "b"): 2})
+
+
+def test_unflatten_dict_non_leaf_value_error_message():
+    with pytest.raises(ValueError) as exc_info:
+        unflatten({("a", "b"): {"existing": 0}, ("a", "b", "c"): 2})
+    message = str(exc_info.value)
+    assert "('a', 'b')" in message
+    assert "('a', 'b', 'c')" in message
+    assert "allow_non_leaf_values=True" in message
+    assert "mutates" in message
+
+
+def test_unflatten_dict_non_leaf_value_raise_does_not_mutate_input():
+    leaf = {"existing": 0}
+    with pytest.raises(ValueError):
+        unflatten({("a",): leaf, ("a", "b"): 2})
+    assert leaf == {"existing": 0}
+
+
+def test_unflatten_dict_allow_non_leaf_values():
+    leaf = {"existing": 0}
+    unflattened = unflatten({("a",): leaf, ("a", "b"): 2}, allow_non_leaf_values=True)
+    assert unflattened == {"a": {"existing": 0, "b": 2}}
+    # The documented side effect: the value from `d` is nested into in place.
+    assert unflattened["a"] is leaf
+    assert leaf == {"existing": 0, "b": 2}
+
+
+def test_unflatten_dict_allow_non_leaf_values_still_rejects_duplicated_leaf():
+    # allow_non_leaf_values only relaxes the non-leaf case; two flat keys
+    # landing on the same leaf are still an error.
+    with pytest.raises(ValueError):
+        unflatten(
+            {1: ("a", "b"), 2: ("a", "b")}, inverse=True, allow_non_leaf_values=True
+        )
+
+
+def test_unflatten_dict_shared_prefix_not_duplicated():
+    # Legitimate shared prefixes and genuine dict leaves still unflatten fine.
+    assert unflatten({("a", "b"): 1, ("a", "c"): 2}) == {"a": {"b": 1, "c": 2}}
+    assert unflatten({("a",): {"x": 1}, ("b",): 2}) == {"a": {"x": 1}, "b": 2}
+
+
 @pytest.fixture
 def dict_with_list():
     return {

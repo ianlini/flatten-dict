@@ -113,7 +113,7 @@ def flatten(
     return flat_dict
 
 
-def nested_set_dict(d, keys, value):
+def nested_set_dict(d, keys, value, created_node_ids=None):
     """Set a value to a sequence of nested keys.
 
     Parameters
@@ -121,19 +121,42 @@ def nested_set_dict(d, keys, value):
     d : Mapping
     keys : Sequence[str]
     value : Any
+    created_node_ids : set, optional
+        ``id()`` of every intermediate dict created so far while unflattening
+        one mapping. When given, a deeper key that runs into a value taken from
+        the input raises ``ValueError`` instead of nesting into it. ``None``
+        (the default) nests into it.
     """
     assert keys
-    key = keys[0]
-    if len(keys) == 1:
+    for depth, key in enumerate(keys[:-1]):
+        if created_node_ids is None:
+            d = d.setdefault(key, {})
+            continue
         if key in d:
-            raise ValueError("duplicated key '{}'".format(key))
-        d[key] = value
-        return
-    d = d.setdefault(key, {})
-    nested_set_dict(d, keys[1:], value)
+            # Descend only into a node we created ourselves; anything else is a
+            # value from the input that this deeper key would nest inside.
+            child = d[key]
+            if id(child) not in created_node_ids:
+                raise ValueError(
+                    "duplicated key '{}': key {} already holds a value and key "
+                    "{} would be nested inside it. Pass "
+                    "allow_non_leaf_values=True to nest into it anyway, but "
+                    "note that this mutates the value from the input dict in "
+                    "place.".format(key, tuple(keys[: depth + 1]), tuple(keys))
+                )
+        else:
+            child = {}
+            created_node_ids.add(id(child))
+            d[key] = child
+        d = child
+
+    key = keys[-1]
+    if key in d:
+        raise ValueError("duplicated key '{}'".format(key))
+    d[key] = value
 
 
-def unflatten(d, splitter="tuple", inverse=False):
+def unflatten(d, splitter="tuple", inverse=False, allow_non_leaf_values=False):
     """Unflatten dict-like object.
 
     Parameters
@@ -149,6 +172,12 @@ def unflatten(d, splitter="tuple", inverse=False):
         'dot': Use dots to split keys.
     inverse : bool
         Whether you want to invert the key and value before flattening.
+    allow_non_leaf_values : bool
+        Whether a key may be nested inside the value of a shorter key, e.g.
+        ``unflatten({('a',): {'existing': 0}, ('a', 'b'): 2})``. If False (the
+        default), that raises ``ValueError``. If True, the deeper key is set on
+        the shorter key's value, which mutates that value in place, so `d` and
+        the returned dict share it.
 
     Returns
     -------
@@ -158,10 +187,11 @@ def unflatten(d, splitter="tuple", inverse=False):
         splitter = SPLITTER_DICT[splitter]
 
     unflattened_dict = {}
+    created_node_ids = None if allow_non_leaf_values else set()
     for flat_key, value in d.items():
         if inverse:
             flat_key, value = value, flat_key
         key_tuple = splitter(flat_key)
-        nested_set_dict(unflattened_dict, key_tuple, value)
+        nested_set_dict(unflattened_dict, key_tuple, value, created_node_ids)
 
     return unflattened_dict
