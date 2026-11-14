@@ -152,7 +152,7 @@ def nested_set_dict(d, keys, value, created_node_ids=None):
 
     key = keys[-1]
     if key in d:
-        raise ValueError("duplicated key '{}'".format(key))
+        raise ValueError("duplicated key {!r}".format(tuple(keys)))
     d[key] = value
 
 

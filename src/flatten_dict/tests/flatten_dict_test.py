@@ -229,6 +229,29 @@ def test_unflatten_dict_inverse_with_duplicated_value(
         unflatten(inv_flat_tuple_dict, inverse=True)
 
 
+@pytest.mark.parametrize("allow_non_leaf_values", [False, True])
+@pytest.mark.parametrize(
+    "path, splitter, expected_message",
+    [
+        (("a", "b"), "tuple", "duplicated key ('a', 'b')"),
+        (("a", 0, "b"), "tuple", "duplicated key ('a', 0, 'b')"),
+        (("a",), "tuple", "duplicated key ('a',)"),
+        ("a.b", "dot", "duplicated key ('a', 'b')"),
+    ],
+)
+def test_unflatten_dict_duplicate_error_names_complete_path(
+    path, splitter, expected_message, allow_non_leaf_values
+):
+    with pytest.raises(ValueError) as exc_info:
+        unflatten(
+            {1: path, 2: path},
+            splitter=splitter,
+            inverse=True,
+            allow_non_leaf_values=allow_non_leaf_values,
+        )
+    assert str(exc_info.value) == expected_message
+
+
 def test_unflatten_dict_non_leaf_value_raises_by_default():
     # A deeper key extending a key that already holds a value must raise
     # instead of nesting into that value.
