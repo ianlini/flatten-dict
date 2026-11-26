@@ -544,3 +544,26 @@ def test_make_splitter(normal_dict, delimiter, delimiter_equivalent):
         unflattened_dict_using_make_splitter
         == unflattened_dict_using_equivalent_splitter
     )
+
+
+@pytest.mark.parametrize(
+    "keep_empty_types", [(dict,), [dict], (dict, list), [dict, list]]
+)
+def test_keep_empty_types_accepts_sequences(keep_empty_types):
+    data = {"mapping": {}, "sequence": [], "nested": {"mapping": {}}, "value": 1}
+    expected = {("mapping",): {}, ("nested", "mapping"): {}, ("value",): 1}
+    if list in keep_empty_types:
+        expected[("sequence",)] = []
+    assert (
+        flatten(data, enumerate_types=(list,), keep_empty_types=keep_empty_types)
+        == expected
+    )
+
+
+@pytest.mark.parametrize("keep_empty_types", [(), []])
+def test_empty_keep_empty_types_discards_empty_values(keep_empty_types):
+    assert flatten(
+        {"mapping": {}, "sequence": [], "value": 1},
+        enumerate_types=[list],
+        keep_empty_types=keep_empty_types,
+    ) == {("value",): 1}
