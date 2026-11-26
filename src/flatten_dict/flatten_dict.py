@@ -63,6 +63,7 @@ def flatten(
     flat_dict : dict
     """
     enumerate_types = tuple(enumerate_types)
+    keep_empty_types = tuple(keep_empty_types)
     flattenable_types = (Mapping,) + enumerate_types
     if not isinstance(d, flattenable_types):
         raise ValueError(
